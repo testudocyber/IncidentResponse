@@ -58,4 +58,4 @@ The IR Team should interview the business or mission owner to understand:
 
 | Date | Version | Description | Author |
 |------|---------|-------------|--------|
-| 2025-05-02 | 1.1 | Expanded with procedural checklist and interview examples | ChatGPT |
+| 2025-05-02 | 1.1 | Expanded with procedural checklist and interview examples | Leo |
