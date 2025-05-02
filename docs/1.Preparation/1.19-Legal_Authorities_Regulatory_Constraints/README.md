@@ -1,32 +1,47 @@
-## Task Legal authorities and regulatory constraints  
+# Legal Authorities and Regulatory Constraints Task
 
+## Purpose
 
-## Conditions  
+Ensure all IR activities operate within State legal authorities, privacy protections, and mission partner regulatory frameworks.
 
+## Standards
 
-## Standards  
-An IR Team will generally be operating under State legal authorities. Supporting a CIKR mission can bring in additional privacy and civil liberty constraints that should be discussed with the mission owner.  
+- IR teams will generally operate under State authorities.
+- Supporting CIKR missions introduces privacy/civil liberty constraints.
+- Constraints must be reviewed with mission owner.
 
+## Procedural Steps (Checklist)
 
-## End State  
+### Identify Applicable Legal Authorities
 
+- [ ] Confirm state activation status and rules.
+- [ ] Engage legal support (JAG or organizational counsel).
+- [ ] Clarify privacy and civil liberty constraints (PII, HIPAA, etc).
 
-## Notes  
+### Validate Mission Activities Against Constraints
 
+- [ ] Review planned IR actions with legal.
+- [ ] Adjust procedures to align with legal guidance.
 
-## Manual Steps  
+### Document and Maintain Legal Reviews
 
+- [ ] Record all legal consultations and approvals.
+- [ ] Maintain documentation with incident logs.
 
-## Running Script  
+### Maintain Awareness and Adjust As Needed
 
+- [ ] Review legal considerations during mission briefings.
+- [ ] Immediately pause and consult if issues arise.
 
-## Dependencies  
+## Tools and Resources
 
+| Purpose | Tools |
+|---------|-------|
+| Legal consultation | MS Teams, Email |
+| Documentation | SharePoint, Confluence |
 
-## Other available tools  
+## Revision History
 
-
-## References  
-
-
-## Revision History  
+| Date | Version | Description | Author |
+|------|---------|-------------|--------|
+| 2025-05-02 | 1.1 | Expanded with legal coordination procedures | Leo |
