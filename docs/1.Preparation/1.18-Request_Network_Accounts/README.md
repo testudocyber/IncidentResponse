@@ -1,4 +1,4 @@
-# 1.18 Request Network Accounts Task
+# Request Network Accounts Task
 
 ## Purpose
 
