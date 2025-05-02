@@ -1,80 +1,89 @@
-# 1.02 — Receive the Mission
+# Receive the Mission Task
 
-## Purpose
+## Conditions
 
-To ensure the incident response team quickly receives and understands the mission objectives so they can plan and initiate appropriate actions to mitigate the incident in a timely and effective manner.
+* Given an IR Team mission to support Guardnet, State IT systems, or another organization as directed by the Governor.
+* Response effort is localized and a Type I / II Federal Disaster Response has not been declared.
 
 ## Standards
 
-- All incoming incidents must be formally received and logged.
-- Mission objectives should be clear, aligned with organizational priorities, and documented.
-- Stakeholders and points of contact must be identified immediately.
-- The mission must be communicated clearly to the team so that they can begin planning and task execution.
+Successfully understand guidance from higher and deploy appropriate resources to complete the mission.
 
-## End State
-
-- Incident mission received, acknowledged, and documented.
-- Clear objectives, scope, and constraints are defined.
-- Key contacts identified and communication established.
-- Incident tracking initiated.
+* Receive Mission
+* Issue WARNO
+* Conduct Mission Analysis
+* Develop Courses of Action
+* Estimate Manning
+* Produce OPORD
+* Activate Personnel and mobilize
 
 ## Procedural Steps (Checklist)
 
-### 1️⃣ Receive Initial Notification
+### Receive Mission
 
-- Check all channels (email, phone, ticketing system) for incident notification.
-- Validate and classify the incident (severity, scope).
-- Create an entry in the Incident Log (Jira, TheHive, or shared doc).
+- [ ] Receive official mission notification.
+- [ ] Document mission requirements and limitations.
+- [ ] Notify IR Team leadership.
+- [ ] Create mission folder.
 
-### 2️⃣ Understand and Clarify Mission Objectives
+### Issue Warning Order (WARNO)
 
-- Engage with incident owner or reporting party to clarify:
-  - What is affected?
-  - What is at risk?
-  - What is the desired end state (contain, eradicate, preserve evidence)?
+- [ ] Draft and issue WARNO with:
+  - Mission overview
+  - Timeline
+  - Task organization
+- [ ] Confirm acknowledgment by all personnel.
 
-- Record mission objectives in a shared location.
+### Conduct Mission Analysis
 
-### 3️⃣ Identify Stakeholders and Points of Contact
+- [ ] Identify mission requirements and objectives.
+- [ ] Assess environment (internal network, external stakeholders).
+- [ ] Identify gaps and constraints.
 
-- Determine:
-  - System owners
-  - Affected business units
-  - Legal and compliance contacts
-  - IT/network operations teams
+### Develop Courses of Action (COA)
 
-- Establish communication channels (Slack channel, Teams group).
+- [ ] Draft multiple COAs (best case, worst case, likely case).
+- [ ] Assess risks and benefits of each.
+- [ ] Select optimal COA for execution.
 
-### 4️⃣ Communicate Mission to Team
+### Estimate Manning
 
-- Brief all IR team members on:
-  - Incident details
-  - Mission objectives
-  - Constraints (business or regulatory)
-  
-- Assign an Incident Commander (if not already assigned).
+- [ ] Identify skills needed (forensics, network, malware).
+- [ ] Assign personnel and fill gaps as necessary.
+- [ ] Validate all personnel are available and fit for duty.
 
-### 5️⃣ Initiate Documentation
+### Produce OPORD
 
-- Update the Mission Log.
-- Start recording all decisions and actions.
-- Establish folder structure in IR documentation repository.
+- [ ] Utilize OPORD template.
+- [ ] Ensure Annex P (Information) and Annex H (Communications) are detailed.
+- [ ] Review and approve by OIC.
+- [ ] Issue OPORD.
+
+### Activate Personnel and Mobilize
+
+- [ ] Notify personnel of mission start.
+- [ ] Stage equipment and prepare movement.
+- [ ] Coordinate access to mission site.
 
 ## Tools and Resources
 
 | Purpose | Tools |
 |---------|-------|
-| Communication and briefing | Slack, MS Teams, Email |
-| Incident tracking | Jira, TheHive, Confluence |
-| Documentation | Google Docs, SharePoint |
+| OPORD drafting | Word or Confluence |
+| Personnel management | Google Sheet, Excel, Task Tracker |
+| Communication | MS Teams, Email |
+
+## End State
+
+The IR Team arrives on-site with appropriate personnel and equipment, prepared to execute defensive operations.
 
 ## References
 
-- NIST SP 800-61r2: Computer Security Incident Handling Guide
-- MITRE ATT&CK
+- [NIST Cyber Security Framework](https://www.nist.gov/cyberframework)
+- [NIST SP 800-61r2: Computer Security Incident Handling Guide](http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-61r2.pdf)
 
 ## Revision History
 
 | Date | Version | Description | Author |
 |------|---------|-------------|--------|
-| 2025-05-02 | 1.1 | Enhanced with detailed steps and context | ChatGPT |
+| 2025-05-02 | 1.1 | Expanded with procedural checklist and operator guidance | Leo |
