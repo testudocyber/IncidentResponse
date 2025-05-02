@@ -1,32 +1,67 @@
-## Task Request for logs from mission owner  
+# Request Logs from Mission Owner Task
 
+## Conditions
 
-## Conditions  
+- IR team activated and network investigation required.
+- Logs may be needed from internal and external sources.
 
+## Standards
 
-## Standards  
-An IR Team should immediately request at least 30 days of logs from the Internet Access Provider (IAP), as well as, logs from the organizations proxy firewall, Domain Name System (DNS), Dynamic Host Configuration Protocol (DHCP) and host/network sensors. Ideally, the organization has 180 days of logs but frequently most of the data is over written in even less than 30 days.  
+- Immediately request logs covering the previous 30 days (minimum).
+- Focus requests on IAP, proxy, DNS, DHCP, and host/network sensor logs.
 
+## Procedural Steps (Checklist)
 
-## End State  
+### Identify Required Logs
 
+- [ ] Confirm log sources with network owner:
+  - Internet Access Provider (IAP)
+  - Proxy firewall logs
+  - DNS logs
+  - DHCP logs
+  - Host and network sensor logs (EDR, IDS, SIEM)
 
-## Notes  
+### Prepare and Send Log Request
 
+- [ ] Draft log request memo or email:
+  - Include log types, timeframe (30 days minimum), and format.
+  - Use mission justification.
+- [ ] Send request to network owner POC.
+- [ ] Track request submission and ETA for receipt.
 
-## Manual Steps  
+### Receive and Validate Logs
 
+- [ ] Validate format and completeness upon receipt.
+- [ ] Log receipt date/time and completeness in mission log.
 
-## Running Script  
+#### Tools
+- Secure file transfer: SFTP, encrypted email, external hard drive
+- Log review: ElasticSearch, Kibana, Splunk, grep (Linux)
 
+#### Example Log Validation Command (Linux):
 
-## Dependencies  
+```bash
+gzip -l firewall_logs_202504.tar.gz
+wc -l firewall_logs_202504/*.log
+```
 
+### Organize and Store Logs
 
-## Other available tools  
+- [ ] Store logs securely (IR evidence repository).
+- [ ] Document chain of custody if needed.
 
+### Analyze Logs
 
-## References  
+- [ ] Assign log analysis tasks to IR team members.
+- [ ] Use tools/scripts to parse and identify indicators of compromise.
 
+## End State
 
-## Revision History  
+- Logs successfully requested, received, validated, and stored.
+- Ready for analysis and use in incident investigation.
+
+## Revision History
+
+| Date | Version | Description | Author |
+|------|---------|-------------|--------|
+| 2025-05-02 | 1.0 | Expanded procedural checklist and log validation examples | Leo |
