@@ -1,55 +1,57 @@
-## Task Establish network access accounts  
+# 1.18 Request Network Accounts Task
 
+## Purpose
 
-## Conditions  
-Coordinate with CNDSP or mission owner network operations to gain network access accounts  
+Gain necessary access to mission partner networks and systems for incident response activities.
 
+## Standards
 
-## Standards  
-* Identifying account types (End-User, Shared Credentials, Service Account, Application, Guest)  
-  * Work with mission partner POC to understand support requirements  
-* Establishing conditions for group membership  
-* Gaining approval for requests to establish network account access  
-* Granting access to the system based on:   
-  * A valid access authorization  
-  * intended system usage  
-  * Other attributes as required by the organization or associated missions/business functions  
+- Identify account types required.
+- Establish access conditions and approval process.
+- Gain access based on authorization and need-to-know.
+- Monitor and remove accounts as needed.
 
+## Procedural Steps (Checklist)
 
-## End State  
-Gain network access accounts  
+### Identify Account Requirements
 
+- [ ] Determine needed access for IR activities.
+- [ ] Confirm with mission partner POC:
+  - End-user access
+  - Shared credentials
+  - Service accounts
 
-## Manual Steps  
-* Identify an Account Manager from the Team [Team Leader]  
-* Preliminary Site Survey to ensure all applicable network access is requested  
-  * Appropriate network groups and member roles are applied  
-  * Additional resource account creation if necessary  
-* When in a Department of Defense setting, use referenced DD Form 2875  
-* Interface with the customer organization liaison to submit request for desired actions  
-* Monitors the use of information system accounts  
-* Notify Client Organization of access changes  
-  * When accounts are no longer required  
-  * When users are terminated or transferred  
-  * When individual information system usage or need-to-know changes  
+### Submit Account Requests
 
+- [ ] Assign team member as Account Manager.
+- [ ] Complete request forms (e.g. DD Form 2875).
+- [ ] Submit request through mission partner process.
 
-## Running Script  
-N/A  
+### Validate Access and Use
 
+- [ ] Confirm accounts provide necessary access.
+- [ ] Monitor use during mission.
+- [ ] Notify partner of any issues or changes.
 
-## Dependencies  
-Service-Member security clearance  
-Applicable civilian credentials  
+### Deactivate Accounts Post-Mission
 
+- [ ] Request account deactivation.
+- [ ] Validate closure in mission closeout.
 
-## Other available tools  
-N/A  
+## Tools and Resources
 
+| Purpose | Tools |
+|---------|-------|
+| Access request | DD Form 2875 |
+| Documentation | SharePoint, Confluence |
 
-## References  
-[DD Form 2875.pdf](./dd2875.pdf)  
-[NIST.SP.800-53r4.pdf](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf)  
+## References
 
+- [DD Form 2875.pdf](./dd2875.pdf)
+- [NIST.SP.800-53r4](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf)
 
-## Revision History  
+## Revision History
+
+| Date | Version | Description | Author |
+|------|---------|-------------|--------|
+| 2025-05-02 | 1.1 | Expanded with procedural checklist and account management guidance | Leo |
