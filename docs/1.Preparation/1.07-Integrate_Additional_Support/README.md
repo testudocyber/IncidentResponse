@@ -1,47 +1,69 @@
-## Integrate Additional Support Task  
+# Integrate Additional Support Task
 
+## Conditions
 
-## Conditions  
-* Given a mission to deploy a IR Team in support of Guardnet, State IT systems, or other organization as directedby the Governor  
-* Response effort if localized and a Type I / II Federal Disaster Response has not been declared  
-* IR Team unable to complete mission requirements due to scope of work and additional support is requested  
-* Incident scope increased to Type I / II Federal Disaster Response and additional forces are necessary  
+- Given a mission to deploy IR Team in support of Guardnet or State IT systems
+- Scope exceeds IR Team capabilities or escalates to Federal response levels
 
+## Standards
 
-## Standards  
-* Coordinate with JAG / Cyber Legal personnel regarding inclusion of T10 forces in mission operations.  
-* In coordination with JAG / Cyber Legal personnel, The Adjutant General (TAG) determines whether or not aDual Status Commander is necessary.  
-* If needed, Dual Status Commander and supporting staff begins operations.  
-* Upon T10 (USAR or Active Duty) forces arrival, IR Team informs their State Joint Operations Center.  
-* Coordinate with JAG / Cyber Legal personnel regarding necessary MOUs and NDAs and appropriate scope forT10 forces.  
-* Coordinate with JAG / Cyber Legal personnel to review the Rules for Use of Cyber and any changes neededfor inclusion of T10 forces.  
-* Work with T10 forces leadership to establish mutually agreeable Battle Rhythm and integration into ongoingoperations  
-* Coordinate with JAG / Cyber Legal personnel immediately should any Soldier become involved in actual orperceived illegal activities  
+- Coordinate with JAG/Cyber Legal for inclusion of T10 forces
+- Confirm Dual Status Commander requirement
+- Establish T10 and IR team coordination
+- Review and establish Rules for Use of Cyber (RUC)
+- Coordinate daily integration operations (Battle Rhythm)
+- Coordinate immediately on any legal concerns
 
+## Procedural Steps (Checklist)
 
-## End State  
-IR Team successfully integrates support from T10 forces in to Cyber mission operations.  
+### Coordinate Legal Inclusion of T10 Forces
 
+- [ ] Notify legal team of operational scope change.
+- [ ] Request review for integration of federal assets.
+- [ ] Document authorities and jurisdictional considerations.
 
-## Notes  
-The scope of this Task will vary by state  
+### Confirm Dual Status Commander Requirement
 
+- [ ] Escalate to TAG (Adjutant General) for determination.
+- [ ] Assign liaison officer for Dual Status Commander coordination.
+- [ ] Document appointment and roles.
 
-## Manual Steps  
+### Coordinate T10 Arrival and Integration
 
+- [ ] Notify State Joint Operations Center (JOC) upon arrival.
+- [ ] Conduct joint in-brief and mission sync.
+- [ ] Assign partner liaison roles.
 
-## Running Script  
+### Establish Battle Rhythm and Integration
 
+- [ ] Define daily brief and debrief schedule.
+- [ ] Align reporting formats.
+- [ ] Create shared communication channels (Teams, SIPR, Signal).
 
-## Dependencies  
+### Update Rules for Use of Cyber (RUC)
 
+- [ ] Engage JAG to review and update RUC.
+- [ ] Brief all teams on updated RUC.
+- [ ] Document RUC in mission folder.
 
-## Other available tools  
+### Coordinate Legal Issues
 
+- [ ] Set direct contact protocols with JAG for urgent legal matters.
+- [ ] Immediately notify JAG of any actual or perceived illegal activities.
+- [ ] Suspend relevant operations pending review.
 
-## References  
-[NIST Cyber Security Framework](https://www.nist.gov/cyberframework)  
-[NIST SP 800-61r2: Computer Security Incident Handling Guide](http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-61r2.pdf)  
+#### Tools
+- MS Teams or Slack for coordination
+- SharePoint or Confluence for documentation
+- Email/DTS for official correspondence
 
+## References
 
-## Revision History  
+- [NIST Cyber Security Framework](https://www.nist.gov/cyberframework)
+- [NIST SP 800-61r2: Computer Security Incident Handling Guide](http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-61r2.pdf)
+
+## Revision History
+
+| Date | Version | Description | Author |
+|------|---------|-------------|--------|
+| 2025-05-02 | 1.0 | Expanded procedural checklist for integration | Leo |
