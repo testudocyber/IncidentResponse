@@ -1,73 +1,61 @@
-## Task Establish Mission Log  
+# Establish Mission Log Task
 
+## Purpose
 
-## Conditions  
-Given a network to defend establish system for mission logging  
+Create and maintain a detailed Mission Log for all incident response activities to support tracking, reporting, and after-action review.
 
+## Standards
 
-## Standards  
-* Team conducts incident tracking utilizing Date-Time Group (DTG)  
-* Team provides incident description  
-* Team categorizes level of incident  
-* Team enumerates discovery and response  
-* Team utilizes report logs  
+- Conduct incident tracking utilizing Date-Time Group (DTG)
+- Provide incident description and categorization
+- Enumerate discovery and response actions
+- Utilize report logs and sanitize for archiving
 
+## Procedural Steps (Checklist)
 
-## End State  
-Mission log created within parameters of the standards  
+### Establish the Mission Log Format
 
+- [ ] Determine logging platform (Excel, Google Sheet, Confluence).
+- [ ] Configure fields:
+  - Date/Time
+  - Category (using Federal Agency Incident Categories)
+  - System/IP
+  - Technical Notes
+  - Summary
+  - Operator (RANK LAST, FIRST)
 
-## Manual Steps  
+### Train Team on Log Use
 
-* How to use the 9-line  
-	* Date/Time:  Indicate when it was discovered  
-	* Reporting Unit & Region:  Input current org/unit representing(ie CALOES or CPT)  
-	* POC: Person who discovered the anomaly   
-	* File Name: Input the file name  
-	* Type: Category of infection  
-	* Hazards: Input understood method of infection  
-	* Threat: Level of incident category and capabilities  
-	* Impact: Determine level of impact  
-	* Protective Measures: Determine steps of possible mitigation techniques  
-	* `9-Line does not leave client's premises`  
+- [ ] Brief team on required entries and frequency.
+- [ ] Review 9-Line and Category reference materials.
 
-* How to use the Federal Agency Incidents Categories Document  
-	* Reference all incident descriptions on the document. `Description` Column  
-	* By choosing the most applicable description, see the associated category (CAT) number. (left most column)  
-	* Ensure to be aware of and follow any associated time limitations in the column labeled `Reporting Timeframe`  
-	* include selected `Category` in the Mission Log  
+### Record Entries in Real Time
 
-* How to Fill Out the Mission Log  
-	* Date/Time column: Insert the current date and time of your entry.  
-	* Category column: Reference the Federal Agency Incidents Categories (can be found in the References section below) in order to categorize the incident that is being worked on.  
-	* System/IP column: Insert the host name and IP address of the asset that is being worked on.  
-	* Technical Notes column: Insert the actions and modifications that were made on the asset being worked on (i.e. Name of script that was run, change of file permissions, copying of a file and moving it to another directory).  
-	* Summary column: Give a breakdown of all activites performed at the date and time in order to simplify an explanation of course of action (COA).  
-	* Operator column: Insert your name in this field following this format: RANK LASTNAME, FIRSTNAME MIDDLE INITIAL.  
+- [ ] Log all actions, observations, and communications.
+- [ ] Use standardized terminology.
+- [ ] Avoid sensitive or classified information unless authorized.
 
-* Team utilizes report logs  
-	* Consolidate mission logs into a summary of all findings for the day  
-	* Save consolidated mission log at the client*approved location  
-	* Sanitize client/victim data from summary report.  Save `sanitized` summary report in CPT archive  
+### Consolidate and Archive
 
+- [ ] Create daily summaries.
+- [ ] Sanitize client/victim data.
+- [ ] Store sanitized versions in CPT archive.
 
-## Running Script  
-N/A  
+## Tools and Resources
 
+| Purpose | Tools |
+|---------|-------|
+| Mission log entry | Excel, Confluence |
+| Incident categorization | [US CERT Incident Categories](https://www.us-cert.gov/government-users/reporting-requirements) |
 
-## Dependencies  
-Identify your limitations as far as utilization of tools on UNCLASSIFIED/CLASSIFIED networks  
+## References
 
+- [Mission Log template](/1.Preparation/Preparation_References/Mission_Log.xlsx)
+- [Federal Agency Incidents Categories Spreadsheet](/1.Preparation/Preparation_References/Federal_Agency_Incident_Categories.xlsx)
+- [Malware 9-Line Report template](/1.Preparation/Preparation_References/Malware_9Line_Report.pdf)
 
-## Other available tools
-N/A
+## Revision History
 
-
-## References  
-[Federal Agency Incidents Categories Website](https://www.us-cert.gov/government-users/reporting-requirements)  
-[Mission Log document](/1.Preparation/Preparation_References/Mission_Log.xlsx)  
-[Federal Agency Incidents Categories Spreadsheet](/1.Preparation/Preparation_References/Federal_Agency_Incident_Categories.xlsx)  
-[Malware 9-Line Report template](/1.Preparation/Preparation_References/Malware_9Line_Report.pdf)  
-
-
-## Revision History  
+| Date | Version | Description | Author |
+|------|---------|-------------|--------|
+| 2025-05-02 | 1.1 | Expanded with procedural checklist and log format | Leo |
