@@ -1,48 +1,81 @@
-## Continuous AARs Task  
+# Continuous AARs Task
 
+## Conditions
 
-## Conditions  
-* Given a mission to deploy a IR Team in support of Guardnet, State IT systems, or other organization as directed by the Governor  
-* Response effort if localized and a Type I / II Federal Disaster Response has not been declared  
+- IR Team deployed in support of Guardnet or State IT systems
 
+## Standards
 
-## Standards  
-Throughout operations, the IR Team should develop AAR containing the following elements:  
+Develop After Action Reviews (AARs) covering:
 
-* List of Participants  
-* Review key actions/event that occurred during mission  
-* Analysis of Lessons Learned  
-* Remediation plans to prevent this from occurring in the future  
-* Discussion of final indicators of compromise to share for detection of potential incidents across the community  
-* Staff performance review  
-* Corrective actions review  
-* Tool utilization review  
-This list is not exhaustive. If the IR Team produces it during mission, it should be considered an artifact and turned over to the supported MP.  
+- List of Participants
+- Review of key actions and events
+- Lessons Learned analysis
+- Remediation plans
+- Indicators of Compromise (IOC) sharing
+- Staff performance review
+- Corrective actions
+- Tool utilization review
 
+## Procedural Steps (Checklist)
 
-## End State  
-The IR Team completes continuous AARs. As appropriate, the IR Team engages the mission partner in lessons learned, ways to prevent future incidents, and how to detect an actionable incident.  
+### List of Participants
 
+- [ ] Document all IR team members and key stakeholders.
+- [ ] Include mission partner contacts.
 
-## Notes  
-This continuous AAR process will improve the Recovery Process and support lessons learned for current and future missions.  
+### Review Key Actions/Events
 
+- [ ] Capture timeline of major actions.
+- [ ] Note decisions and outcomes.
+- [ ] Use mission log as reference.
 
-## Manual Steps  
+### Analyze Lessons Learned
 
+- [ ] Identify what went well.
+- [ ] Highlight what didn’t work and why.
+- [ ] Document suggested improvements.
 
-## Running Script  
+### Develop Remediation Plans
 
+- [ ] Assign action items to responsible parties.
+- [ ] Set target dates for completion.
+- [ ] Track and verify completion post-incident.
 
-## Dependencies  
+### Share Indicators of Compromise (IOCs)
 
+- [ ] Extract IOCs from forensic data.
+- [ ] Format for sharing (STIX, plain text).
+- [ ] Provide to mission partner and ISAC.
 
-## Other available tools  
+#### Example IOC Sharing Format:
 
+```plaintext
+IOC Type: IP Address
+Value: 203.0.113.45
+Observed: 2025-05-01
+Description: C2 Server
+```
 
-## References  
-[NIST Cyber Security Framework](https://www.nist.gov/cyberframework)  
-[NIST SP 800-61r2: Computer Security Incident Handling Guide](http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-61r2.pdf)  
+### Review Staff Performance
 
+- [ ] Collect team feedback.
+- [ ] Note outstanding contributions or gaps.
+- [ ] Recommend training or recognition.
 
-## Revision History  
+### Review Corrective Actions and Tool Utilization
+
+- [ ] Document tool performance and issues.
+- [ ] Recommend upgrades or replacements.
+- [ ] Adjust playbooks based on tool success/failures.
+
+## References
+
+- [NIST Cyber Security Framework](https://www.nist.gov/cyberframework)
+- [NIST SP 800-61r2](http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-61r2.pdf)
+
+## Revision History
+
+| Date | Version | Description | Author |
+|------|---------|-------------|--------|
+| 2025-05-02 | 1.0 | Fully expanded checklist and IOC sharing process | Leo |
