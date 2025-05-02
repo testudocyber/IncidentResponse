@@ -1,35 +1,57 @@
-## Task Review Organizational information security policy and constraints  
+# Review Organizational Information Security Policy and Constraints Task
 
+## Conditions
 
-## Conditions  
+- IR team activated to support a mission partner.
+- Security policies and IT governance documents are available.
 
+## Standards
 
-## Standards  
-During the pre-mission phase (and as part of the mission owner interview), request and review the
-organizations Information Technology (IT) and security policies and constraints. The IT policy
-documents can inform the CPT on whether (and under what conditions) VPN access is granted,
-removable media is used or how files are moved from one security fabric to another.  
+- Request and review the organization's Information Security and IT policies before mission execution.
+- Understand constraints on VPN access, removable media, and data handling.
+- Use policies to inform IR team operating procedures.
 
+## Procedural Steps (Checklist)
 
-## End State  
+### Request Security Policies
 
+- [ ] Contact mission partner POC to request:
+  - Information Security Policies
+  - Acceptable Use Policies (AUP)
+  - Network Access Policy
+  - Data Handling Policy
 
-## Notes  
+### Review and Analyze Policies
 
+- [ ] Assign team member to review documents.
+- [ ] Identify constraints relevant to IR operations:
+  - VPN access requirements
+  - Restrictions on removable media
+  - Data transfer limitations
+  - Logging and monitoring obligations
 
-## Manual Steps  
+### Adjust IR Operations Accordingly
 
+- [ ] Brief IR team on constraints.
+- [ ] Update IR checklist or playbooks to reflect policy-driven restrictions.
+- [ ] Log policy review and adjustments in mission documentation.
 
-## Running Script  
+### Engage Legal/Compliance (if required)
 
+- [ ] If unclear or restrictive policies exist, escalate for review.
+- [ ] Obtain approvals for deviations or waivers.
 
-## Dependencies  
+#### Tools
+- PDF viewers (Adobe Reader, Foxit)
+- Policy review checklist (Excel, Confluence template)
 
+## End State
 
-## Other available tools  
+- IR team operations aligned to mission partner security requirements.
+- No policy violations during incident response activities.
 
+## Revision History
 
-## References  
-
-
-## Revision History  
+| Date | Version | Description | Author |
+|------|---------|-------------|--------|
+| 2025-05-02 | 1.0 | Expanded procedural checklist for policy review process | Leo |
