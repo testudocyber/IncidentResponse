@@ -1,203 +1,101 @@
-# 1.01 – Troop Leading Procedures (TLP) for Cyber Incident Response
+# Troop Leading Procedures Task
 
-## Purpose
+## Conditions
 
-This document adapts the military Troop Leading Procedures (TLP) framework to guide incident response (IR) teams in planning and executing cybersecurity operations. It provides a structured approach to rapidly assess, plan, and respond to cyber incidents, ensuring coordinated and effective action.
+* Given a mission to deploy an IR Team in support of Guardnet, State IT systems, or other organization as directed by the Governor.
+* Response effort is localized and a Type I / II Federal Disaster Response has not been declared.
 
 ## Standards
 
-The TLP framework consists of eight steps:
+* Receive the Mission
+* Issue a warning order
+* Make a tentative plan
+* Start necessary movement
+* Reconnoiter
+* Complete the plan
+* Issue the complete order
+* Supervise
 
-1. **Receive the Mission**
-2. **Issue a Warning Order (WARNORD)**
-3. **Make a Tentative Plan**
-4. **Initiate Movement**
-5. **Conduct Reconnaissance**
-6. **Complete the Plan**
-7. **Issue the Complete Order**
-8. **Supervise and Refine**
+## Procedural Steps (Checklist)
 
-> **Note:** These steps are iterative and may overlap depending on the situation and time constraints.
+### Receive the Mission
 
-## End State
+- [ ] Confirm receipt of the mission from higher headquarters.
+- [ ] Document the mission parameters (who, what, where, when, why).
+- [ ] Notify all IR Team leadership and key staff.
+- [ ] Create initial mission folder (digital or physical).
 
-The goal is to enable incident response teams to:
+### Issue a Warning Order
 
-- Rapidly assess and understand the incident.
-- Develop and communicate a clear response plan.
-- Coordinate actions across all involved parties.
-- Effectively contain, eradicate, and recover from the incident.
-- Continuously improve response capabilities through supervision and refinement.
+- [ ] Notify all team members that a mission is pending.
+- [ ] Provide known details:
+  - Expected mission start
+  - Location
+  - Initial support needs
+- [ ] Confirm acknowledgement from each member.
 
----
+### Make a Tentative Plan
 
-# Procedural Steps
+- [ ] Conduct initial mission analysis.
+- [ ] Identify tasks, constraints, and resources.
+- [ ] Draft preliminary COA (Course of Action).
+- [ ] Consult SME if available.
 
-<details>
-<summary><strong>1. Receive the Mission</strong></summary>
+### Start Necessary Movement
 
-**Objective:** Understand the nature and scope of the incident.
+- [ ] Initiate movement prep (gear, transportation, documentation).
+- [ ] Assign movement officer.
+- [ ] Coordinate with logistics and mission partner for site access.
 
-**Actions:**
+### Reconnoiter
 
-- Gather initial information from alerts, reports, or notifications.
-- Identify affected systems, data, and stakeholders.
-- Determine the incident classification and severity.
-- Assign an incident commander or lead responder.
+- [ ] Conduct remote or physical site recon (network topology, owner engagement).
+- [ ] Validate assumptions in tentative plan.
+- [ ] Update plan based on recon findings.
 
-**Tools:**
+### Complete the Plan
 
-- SIEM systems (e.g., Splunk, ELK Stack).
-- Incident tracking systems (e.g., Jira, ServiceNow).
+- [ ] Finalize OPORD or verbal orders.
+- [ ] Coordinate support requirements.
+- [ ] Validate plan with mission owner if applicable.
 
-</details>
+### Issue the Complete Order
 
-<details>
-<summary><strong>2. Issue a Warning Order (WARNORD)</strong></summary>
+- [ ] Issue OPORD or verbal orders to IR Team.
+- [ ] Conduct mission brief to cover:
+  - Situation
+  - Mission
+  - Execution
+  - Sustainment
+  - Command/Signal
 
-**Objective:** Alert relevant parties to prepare for potential response actions.
+### Supervise
 
-**Actions:**
-
-- Disseminate initial incident information.
-- Provide preliminary guidance on potential actions and resource mobilization.
-- Establish communication channels for ongoing coordination.
-
-**Tools:**
-
-- Email, messaging platforms (e.g., Slack, Microsoft Teams).
-- Emergency notification systems.
-
-</details>
-
-<details>
-<summary><strong>3. Make a Tentative Plan</strong></summary>
-
-**Objective:** Develop an initial response strategy.
-
-**Actions:**
-
-- Analyze the incident using frameworks like MITRE ATT&CK.
-- Identify potential containment, eradication, and recovery steps.
-- Assess resource requirements and constraints.
-- Coordinate with legal, compliance, and public relations teams.
-
-**Tools:**
-
-- Threat intelligence platforms.
-- Network and system analysis tools (e.g., Wireshark, Nmap).
-
-</details>
-
-<details>
-<summary><strong>4. Initiate Movement</strong></summary>
-
-**Objective:** Begin mobilizing resources and taking preparatory actions.
-
-**Actions:**
-
-- Deploy incident response team members to critical locations or systems.
-- Isolate affected systems to prevent further compromise.
-- Begin collecting forensic data for analysis.
-
-**Tools:**
-
-- Endpoint detection and response (EDR) tools (e.g., CrowdStrike, Carbon Black).
-- Forensic imaging tools (e.g., FTK Imager, EnCase).
-
-</details>
-
-<details>
-<summary><strong>5. Conduct Reconnaissance</strong></summary>
-
-**Objective:** Gather detailed information to inform the final response plan.
-
-**Actions:**
-
-- Perform in-depth analysis of affected systems and networks.
-- Identify indicators of compromise (IOCs) and attack vectors.
-- Assess the extent of data exfiltration or system damage.
-
-**Tools:**
-
-- Log analysis tools (e.g., LogRhythm, Graylog).
-- Malware analysis sandboxes (e.g., Cuckoo Sandbox).
-
-</details>
-
-<details>
-<summary><strong>6. Complete the Plan</strong></summary>
-
-**Objective:** Finalize the response strategy with detailed actions and assignments.
-
-**Actions:**
-
-- Develop a comprehensive incident response plan (IRP) document.
-- Assign specific tasks to team members with clear timelines.
-- Coordinate with external partners or vendors as necessary.
-
-**Tools:**
-
-- Project management tools (e.g., Trello, Asana).
-- Documentation platforms (e.g., Confluence, SharePoint).
-
-</details>
-
-<details>
-<summary><strong>7. Issue the Complete Order</strong></summary>
-
-**Objective:** Communicate the finalized plan to all stakeholders for execution.
-
-**Actions:**
-
-- Distribute the IRP to all relevant parties.
-- Conduct briefings to ensure understanding of roles and responsibilities.
-- Establish checkpoints for progress updates and adjustments.
-
-**Tools:**
-
-- Video conferencing tools (e.g., Zoom, Webex).
-- Shared calendars and scheduling tools.
-
-</details>
-
-<details>
-<summary><strong>8. Supervise and Refine</strong></summary>
-
-**Objective:** Oversee the execution of the response plan and make necessary adjustments.
-
-**Actions:**
-
-- Monitor the progress of response activities.
-- Address any obstacles or unforeseen developments.
-- Conduct after-action reviews to identify lessons learned.
-- Update incident response procedures and documentation accordingly.
-
-**Tools:**
-
-- Performance monitoring tools.
-- Feedback collection platforms (e.g., surveys, debrief forms).
-
-</details>
-
----
+- [ ] Monitor execution.
+- [ ] Adjust orders as needed (FRAGOs).
+- [ ] Ensure after-action capture and reporting.
 
 ## Tools and Resources
 
-| Category | Tools |
-|----------|-------|
-| SIEM Systems | Splunk, ELK Stack |
-| EDR Tools | CrowdStrike, Carbon Black |
-| Forensic Tools | FTK Imager, EnCase |
-| Communication Platforms | Slack, Microsoft Teams, Zoom |
-| Project Management | Trello, Asana, Confluence |
+| Purpose | Tools |
+|---------|-------|
+| OPORD creation | Word template or Confluence |
+| Mission tracking | SharePoint, IR Tracker |
+| Communication | MS Teams, Phone, Radio |
 
----
+## End State
+
+As time allows, conduct MDMP, develop OPORD (and/or FRAGOs), and on-premises recon.
+If time does not allow, verbal orders are issued and documented during Cyber Incident Tracking.
 
 ## References
 
-- CALL Handbook 15-06: Military Decision Making Process (MDMP)
-- 150-LDR-5012: Conduct Troop Leading Procedures
-- ADP 6-22: Army Leadership
-- NIST SP 800-61 Rev. 2: Computer Security Incident Handling Guide
-- MITRE ATT&CK Framework: Adversarial Tactics, Techniques, and Common Knowledge
+- [CALL Handbook 15-06: MDMP](http://usacac.army.mil/sites/default/files/publications/15-06_0.pdf)
+- [150-LDR-5012: Troop Leading Procedures](https://rdl.train.army.mil/catalog-ws/view/100.ATSC/B2CD5B93-A4F0-40F3-82E3-AAA34EA2ECAD-1395943497063/report.pdf)
+- [ADP 6-22: Army Leadership](https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN20039-ADP_6-22-001-WEB-0.pdf)
+
+## Revision History
+
+| Date | Version | Description | Author |
+|------|---------|-------------|--------|
+| 2025-05-02 | 1.1 | Expanded with procedural checklist and operator details | Leo |
