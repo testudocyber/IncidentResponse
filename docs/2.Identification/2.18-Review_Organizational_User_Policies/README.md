@@ -1,22 +1,27 @@
-## Task Review Organizational User Policies  
+# Review Organizational User Policies
 
+## Task Review Organizational User Policies
 
-## Conditions  
-Given an organization user policies and access to information security personnel and knowledge workers.  
+## Conditions
 
+Given organization user policies and access to information security personnel and knowledge workers.
 
-## Standards  
-The team member reviews all written policies regarding users of information systems within a given organization. The policies should at a minimum address:  
-* Acceptable Use Policy  
-* Account request process  
-* Account creation/deletion/suspension procedures  
-* Access control methodology (e.g. group membership)  
-* Initial and periodic user training  
-* Process for elevated privilege request and reviewed  
-* Account audit process  
+> **Operator Note:** Understanding policy is crucial to assessing procedural compliance and risk exposure during an incident.
 
-The team member will interview information security personnel to ensure complete understanding of policies and technical implementation as necessary.  
-The team member interviews random knowledge workers to ensure user base has full understanding of user requirements and responsibilities.  
+## Standards
+
+* Team member reviews all written policies regarding users of information systems.  
+* Policies should address at minimum:
+    * Acceptable Use Policy (AUP)
+    * Account request process
+    * Account creation, deletion, and suspension procedures
+    * Access control methodology
+    * Initial and periodic user training
+    * Elevated privilege request and review process
+    * Account audit process
+
+* Team member interviews security personnel for technical implementation insight.  
+* Team member interviews random users for awareness and compliance validation.
 
 
 ## Endstate  
@@ -54,4 +59,39 @@ Accounts will be audited on a monthly schedule and compared against various vari
 [DISA IAWIP Policy References](http://iase.disa.mil/iawip/Pages/policyref.aspx)  
 
 
-## Revision History  
+## Operator Recommendations and Additional Tools
+
+### Operator Checklist
+
+- [ ] Obtain and review latest organizational user policies.
+- [ ] Interview system administrators and IA personnel.
+- [ ] Interview representative users for policy awareness.
+- [ ] Document gaps and recommendations.
+- [ ] Brief findings to system owner.
+
+### Tools by Platform
+
+| Platform | Tool | Purpose |
+|----------|------|---------|
+| Universal | SharePoint / Policy repository | Locate user policy documents |
+| Windows | PowerShell / Active Directory Tools | Validate user accounts and statuses |
+
+### Best Practices
+
+- Validate account suspension/deletion process during review.
+- Focus on elevated privileges and their review processes.
+- Provide clear recommendations for unaddressed security gaps.
+
+## References
+
+[NIST 800-53 Controls](https://nvd.nist.gov/download/800-53/800-53-controls.xml)  
+[DISA IAWIP Policy References](http://iase.disa.mil/iawip/Pages/policyref.aspx)
+
+---
+
+## Revision History
+
+| Date | Version | Description | Author |
+|------|---------|-------------|--------|
+| 2025-05-02 | 1.8 | Full original + enriched operator-focused analysis procedures and checklists | Leo |
+📦 FINAL VERSION → 2.19 Create Firewall Rule
