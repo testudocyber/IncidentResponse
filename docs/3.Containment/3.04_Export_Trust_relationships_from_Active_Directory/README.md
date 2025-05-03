@@ -1,52 +1,160 @@
-## Task Export Trust Relationships from Active Directory  
+# Export Trust Relationships from Active Directory
 
+## Task Export Trust Relationships from Active Directory
 
-## Conditions  
-Given a Domain Controller (DC), a domain account with required permissions, and a domain workstation with Remote Server Administration Tools (RSAT)  
+## Conditions
 
+Given a Domain Controller (DC), domain account with appropriate permissions, and a domain workstation with Remote Server Administration Tools (RSAT) and PowerShell available.
 
-## Standards  
-* Team member obtains the correct name for the target domain  
-* Team member creates or chooses a script using Microsoft command line tools to extract domain trust information to a local file  
+> **Operator Note:** Identifying and reviewing domain trust relationships helps detect unexpected or unauthorized domain connections, which could be used for lateral movement or privilege escalation.
 
-OR
+## Standards
 
-* Team member opens a PowerShell console and selects or creates a script using the Active Directory Domain Services (AD DS) to export one or more GPOs to a local file  
+* Team member obtains the correct name of the target domain.  
+* Team member uses approved methods (PowerShell, WMI, or command line tools) to export trust relationship information to a local file for analysis.  
+* Exported data includes:
+  - Trust Partner
+  - Trust Type
+  - Trust Direction
+  - Trust Attributes (Transitive/Non-Transitive)
+  - Creation/Modification Dates (if available)
 
+## End State
 
-## End State  
-All Domain trust information been exported to a local file for review  
+All Domain Trust relationship information has been exported to a local file and validated for review by the incident response team.
 
+---
 
-## Notes  
-The AD DS Cmdlets for PowerShell are only available for Windows Server 2012 R2 or Windows 8.1 or higher with the RSAT tools installed  
+## Notes
 
+The Active Directory Domain Services (AD DS) Cmdlets are available on:
 
-## Manual Steps  
-Example:  
-	```powershell  
-	Get-WmiObject -Class Microsoft_DomainTrustStatus -Namespace ROOT\MicrosoftActiveDirectory | Select-Object PSComputername, TrustedDomain, TrustAttributes, TrustDirection, TrustType |fl
-	```   
+- Windows Server 2012 R2 and higher
+- Windows 8.1 and higher with RSAT installed
 
-* Understanding the output of the above command  
+---
 
-TrustedAttributes = Direction of Trust (1 = Non-Transitive, 2 = Transitive)  
+## Manual Steps
 
-TrustedDirection = Direction of Trust (1 = Incoming Only, 2 = Outgoing Only, 3 = Two-way)  
+### PowerShell Method (Preferred)
 
+#### Check and import AD module:
 
-## Running Script  
+```powershell
+Import-Module ActiveDirectory
+```
 
+#### Enumerate domain trusts using WMI:
 
-## Dependencies  
+```powershell
+Get-WmiObject -Class Microsoft_DomainTrustStatus -Namespace ROOT\MicrosoftActiveDirectory |
+Select-Object PSComputername, TrustedDomain, TrustAttributes, TrustDirection, TrustType |
+Format-List
+```
 
+##### TrustAttributes meaning:
 
-## Other available tools  
+- `1` = Non-Transitive
+- `2` = Transitive
 
+##### TrustDirection meaning:
 
-## References  
+- `1` = Incoming Only
+- `2` = Outgoing Only
+- `3` = Two-way
+
+#### Export trust relationships to CSV:
+
+```powershell
+Get-WmiObject -Class Microsoft_DomainTrustStatus -Namespace ROOT\MicrosoftActiveDirectory |
+Select-Object PSComputername, TrustedDomain, TrustAttributes, TrustDirection, TrustType |
+Export-Csv ".\DomainTrusts.csv" -NoTypeInformation
+```
+
+---
+
+### Alternate Tools (Command-line and Other Methods)
+
+#### NLTEST (Built-in Windows Command):
+
+```cmd
+nltest /domain_trusts
+```
+
+> **Operator Note:** `nltest` provides trust relationships including flags that indicate transitive and direct/indirect relationships.
+
+#### Get-DomainTrust (PowerView - Optional/Advanced use)
+
+```powershell
+Import-Module .\PowerView.ps1
+Get-DomainTrust
+```
+
+> **Operator Note:** PowerView provides advanced trust relationship analysis but should only be used if authorized.
+
+---
+
+## Running Script
+
+Example script (PowerShell):
+
+```powershell
+Get-WmiObject -Class Microsoft_DomainTrustStatus -Namespace ROOT\MicrosoftActiveDirectory |
+Export-Csv .\DomainTrusts.csv -NoTypeInformation
+```
+
+Save the exported file to a secure incident response working directory.
+
+---
+
+## Dependencies
+
+* PowerShell and RSAT tools installed
+* Domain Admin or delegated read access to trust relationships
+* Optional: PowerView (if authorized for advanced domain enumeration)
+
+---
+
+## Other Available Tools
+
+| Tool | Platform | Use Case |
+|------|----------|----------|
+| PowerShell (WMI) | Windows | Primary trusted relationship export |
+| nltest | Windows | Quick command-line trust verification |
+| PowerView | Windows | Advanced trust and domain relationship analysis |
+| Active Directory Domains and Trusts GUI | Windows | Visual review of trusts (no export feature) |
+
+---
+
+## Operator Recommendations and Additional Tools
+
+### Operator Checklist
+
+- [ ] Validate access permissions and PowerShell module availability.
+- [ ] Export domain trust relationships using WMI + PowerShell.
+- [ ] Verify exported data contains all relevant attributes.
+- [ ] Optionally use nltest for verification.
+- [ ] Securely store exported trust relationship information.
+
+### Best Practices
+
+- Always use PowerShell or nltest for verifiable exports.
+- Validate trust directions and attributes (watch for two-way trusts).
+- Look for unexpected external domains or forest trusts.
+- Cross-check modification dates for recent or unauthorized changes.
+
+---
+
+## References
+
 [AD DS Cmdlets](https://technet.microsoft.com/en-us/library/hh852315(v=wps.630).aspx)  
-[Get-DomainTrusts](https://github.com/WiredPulse/PowerShell/blob/master/Active_Directory/Get-DomainTrusts.ps1)  
+[Get-DomainTrusts (PowerView)](https://github.com/WiredPulse/PowerShell/blob/master/Active_Directory/Get-DomainTrusts.ps1)  
+[NLTEST Trusts Documentation](https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/nltest)
 
+---
 
-## Revision History  
+## Revision History
+
+| Date | Version | Description | Author |
+|------|---------|-------------|--------|
+| 2025-05-02 | 1.9 | Full original + enriched PowerShell, alternate tooling, operator checklist and best practices | Leo |
