@@ -1,66 +1,158 @@
-## Task Protect Domain Administrator Account  
+# Disable Domain Administrator Password
 
+## Task Protect Domain Administrator Account
 
-## Conditions  
-Given a target Domain, a Domain Controller (DC), a user account with appropriate rights and privileges to modify user accounts, and a workstation with the Windows Remote Server Administration Tools (RSAT) installed  
+## Conditions
 
+Given a target Domain, a Domain Controller (DC), a user account with appropriate rights and privileges to modify user accounts, and a workstation with the Windows Remote Server Administration Tools (RSAT) installed.
 
-## Standards  
+> **Operator Note:** Disabling, renaming, and clearing the built-in Domain Administrator account is a defense-in-depth control that is strongly recommended by CIS Benchmarks and DISA STIG, but must be performed with caution to avoid domain lockout.
 
+## Standards
 
-## End State  
-Target domain Administrator account has been renamed and alternate dummy account named “Administrator” with no rights or privileges has been created  
+* Team member coordinates with the business or enclave owner prior to modifying the Domain Administrator account.  
+* Team member renames the built-in Domain Administrator account.  
+* Team member creates a dummy "Administrator" account with no privileges.  
+* Team member disables the built-in Administrator account.  
+* Team member clears any descriptive attributes to avoid revealing account details.  
 
+## End State
 
-## Notes  
-Mission Element lead ought to request this capability of the business owner in order to secure accounts and organizational units  
+The built-in Domain Administrator account has been renamed and disabled. A dummy "Administrator" account with no rights has been created.
 
-The specific DCO-E MET that drives this task requires the domain Administrator account to be disabled; however, Microsoft recommends the steps as provided in this task. Disabling the Domain Administrator account can cause issues across a range of services and assets. While this task does not totally protect against specific attack vectors, it is part of the Center for Information Security (CIS) Benchmarks and Defense Information Systems Agency (DISA) Security Technical Implementation Guide (STIG) requirements for Microsoft Operating Systems. These tasks can also be accomplished using PowerShell scripts using the PowerShell AD Cmdlets.  
+---
 
+## Notes
 
-## Manual Steps  
-Useful commands:  
+Mission Element lead ought to request this capability of the business owner prior to execution.
 
-* Open Active Directory Users and Computers(GUI):  
+Disabling or renaming the Domain Administrator account prevents attackers from easily identifying or abusing the account during lateral movement.
+
+Microsoft does not recommend full deletion or disablement of the original Administrator account unless carefully coordinated.
+
+---
+
+## Manual Steps
+
+### Open Active Directory Users and Computers (GUI)
+
 ```bat
-dsa.msc  
-```   
+dsa.msc
+```
 
-* Rename local administrator account:  
-```bat 
+- Navigate to **Users**
+- Locate the **Administrator** account
+
+---
+
+### Rename the built-in Administrator account (WMIC)
+
+```bat
 wmic useraccount where name='Administrator' call rename name='NewAdminName'
-```  
+```
 
-* Create account named Administrator, but with no permissions, and only after default Administrator accounts is renamed(Warning if done wrong, could result in lockout):  
+> **Operator Note:** Choose a non-obvious name to avoid easy detection (e.g. "SysOps-Backup").
+
+---
+
+### Create a dummy Administrator account with no permissions
+
 ```bat
 net user Administrator C0mplex_P@ssword /ADD /PASSWORDCHG:NO
-```  
+```
 
-* Disable Administrator account:  
+> **Operator Note:** Use a complex, randomly generated password.
+
+---
+
+### Disable the dummy Administrator account
+
 ```bat
-Net user Administrator /active:no
-```  
+net user Administrator /active:no
+```
 
-* Remove Administrator account description(beta):  
-```powershell  
+---
+
+### Remove description and attributes (Optional but recommended)
+
+```powershell
 Set-ADUser Administrator -Description ""
-Set-ADUser -Identity Administrator -City "" -Clear "" -Company "" -Country "" -Department "" -Description "" -DisplayName "" -Division "" -EmailAddress "" -EmployeeID "" -EmployeeNumber "" -Fax "" -GivenName "" -HomeDirectory "" -HomeDrive "" -HomePage "" -HomePhone "" -Initials "" -LogonWorkstations "" -MobilePhone "" -Office "" -OfficePhone "" -Organization "" -OtherName "" -POBox "" -PostalCode "" -ProfilePath "" -SamAccountName "" -ScriptPath “” -State "" -StreetAddress "" -Surname "" -Title "" -UserPrincipalName "" -Partition "" -Server ""
-```  
 
+Set-ADUser -Identity Administrator -City "" -Clear "" -Company "" -Country "" -Department "" -Description "" -DisplayName "" -Division "" -EmailAddress "" -EmployeeID "" -EmployeeNumber "" -Fax "" -GivenName "" -HomeDirectory "" -HomeDrive "" -HomePage "" -HomePhone "" -Initials "" -LogonWorkstations "" -MobilePhone "" -Office "" -OfficePhone "" -Organization "" -OtherName "" -POBox "" -PostalCode "" -ProfilePath "" -SamAccountName "" -ScriptPath "" -State "" -StreetAddress "" -Surname "" -Title "" -UserPrincipalName "" -Partition "" -Server ""
+```
 
-## Running Script  
+> **Operator Note:** This minimizes information disclosure for dummy accounts.
 
+---
 
-## Dependencies  
+## Running Script (Example automated flow)
 
+```powershell
+# Rename default administrator account
+wmic useraccount where name='Administrator' call rename name='IRAdminBackup'
 
-## Other available tools  
+# Create dummy Administrator account
+net user Administrator ComplexPass123! /ADD /PASSWORDCHG:NO
 
+# Disable dummy Administrator account
+net user Administrator /active:no
 
-## References  
-### [DISA STIGS](https://iase.disa.mil/stigs)  
-### [CIS Benchmark downloads](http://learn.cisecurity.org/benchmarks)  
-### [Securing AD Administrative Groups and Accounts](https://technet.microsoft.com/en-us/library/cc700835.aspx)  
+# Clear AD attributes (optional step)
+Set-ADUser Administrator -Description ""
+```
 
+---
 
-## Revision History  
+## Dependencies
+
+* RSAT with Active Directory Module installed
+* Domain Admin or equivalent privileges
+* Approval from System/Enclave owner
+* Strong random password generator (optional)
+
+---
+
+## Other Available Tools
+
+| Tool | Platform | Use Case |
+|------|----------|----------|
+| PowerShell + AD Module | Windows | AD attribute clearing, disable account |
+| WMIC | Windows | Rename local Administrator |
+| net user | Windows | Create dummy accounts, disable |
+| ADUC (dsa.msc) | Windows | Visual/manual verification |
+
+---
+
+## Operator Recommendations and Additional Tools
+
+### Operator Checklist
+
+- [ ] Obtain approval before proceeding.
+- [ ] Rename the built-in Administrator account.
+- [ ] Create a dummy "Administrator" account.
+- [ ] Disable the dummy account immediately after creation.
+- [ ] Clear dummy account AD attributes.
+- [ ] Document all changes and secure new credentials.
+
+### Best Practices
+
+- Rename built-in Administrator account to a unique name.
+- Use randomly generated passwords for dummy accounts.
+- Clear all descriptive fields to prevent enumeration.
+- Document approvals and execution steps in IR log.
+
+---
+
+## References
+
+[DISA STIGS](https://iase.disa.mil/stigs)  
+[CIS Benchmark downloads](http://learn.cisecurity.org/benchmarks)  
+[Securing AD Administrative Groups and Accounts](https://technet.microsoft.com/en-us/library/cc700835.aspx)
+
+---
+
+## Revision History
+
+| Date | Version | Description | Author |
+|------|---------|-------------|--------|
+| 2025-05-02 | 1.9 | Original + enhanced operator flow, PowerShell automation, alternate tooling and recommendations | Leo |
