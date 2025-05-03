@@ -1,118 +1,159 @@
+# Scan ICS Equipment Ports
+
 ## Task Scan ICS Equipment Ports
+
 2.04 – Active_Host_and_Service_Enumeration  
 2.01 – Create a list of active IP addresses  
 2.05 – Create a list of active IP addresses with key ports included  
 2.07 – Scan ICS Equipment Ports  
-2.06 – Scan all ports of all hosts on given network segment  
+2.06 – Scan all ports of all hosts on given network segment
 
+## Conditions
 
-## Conditions  
-Given a suspected compromised network segment(s), access to a system that can access and scan the identified network segment(s), and network scanning software included in the team’s incident response kit.  
+Given a suspected compromised network segment(s), access to a system that can access and scan the identified network segment(s), and network scanning software included in the team’s incident response kit.
 
+> **Operator Note:** ICS environments are extremely sensitive. Nmap scans can cause device failure or process disruption. Always coordinate with system owners and obtain written approval.
 
-## Standards  
+## Standards
+
 * The team member identifies possibly compromised network segment(s).  
 * The team member accesses a system that can scan the identified network segment(s).  
-* The team member utilizes an IP-based network scanning utility to perform one of the following scanning tasksand directs the output to a text file for analysis:  
-	* 2.04 – Active_Host_and_Service_Enumeration  
-	* 2.01 – Create a list of active IP addresses  
-	* 2.05 – Create a list of active IP addresses with key ports included  
-	* 2.07 – Scan ICS Equipment Ports  
-	* 2.06 – Scan all ports of all hosts on given network segment  
-* The resulting scan data is compared to known network host data to determine anomalies present in the scanned network segment.  
+* The team member utilizes an IP-based network scanning utility to perform one of the following scanning tasks and directs the output to a text file for analysis:  
+    * 2.04 – Active Host and Service Enumeration  
+    * 2.01 – Create a list of active IP addresses  
+    * 2.05 – Create a list of active IP addresses with key ports included  
+    * 2.07 – Scan ICS Equipment Ports  
+    * 2.06 – Scan all ports of all hosts on given network segment  
+* The resulting scan data is compared to known network host data to determine anomalies present in the scanned network segment.
 
+> **Operator Note:** Use `-T1` or `-T2` scan timing options in Nmap to reduce scan aggressiveness when targeting ICS environments.
 
-## End State  
-All active hosts, ports and services are carefully enumerated based on the specific sub-task accomplished and any anomalies or mis-configurations are identified.  
+## End State
 
+All active hosts, ports and services are carefully enumerated based on the specific sub-task accomplished and any anomalies or mis-configurations are identified.
+
+> **Operator Note:** Carefully review ICS results with facility or SCADA engineers to validate accuracy and rule out false positives.
 
 ## Manual Steps
-A list of IP ranges can be provided by using the `-f IPRanges` option; otherwise, a range can be specified with `-i IPRange`. For each BD, the script will need to be ran.  
-The script will need to be marked executable before running:  
 
-* Make the script executable  
-	```bash
-	chmod +x NmapScript.sh  
-	```  
+A list of IP ranges can be provided by using the `-f IPRanges` option; otherwise, a range can be specified with `-i IPRange`.  
+For each BD, the script will need to be ran.  
+The script will need to be marked executable before running:
 
-* For Task 2.04, run the NmapScript.sh and choose menu 1  
-	```  
-	1. 2.04 – Active_Host_and_Service_Enumeration  
-	2. 2.01 – Create a list of active IP addresses  
-	3. 2.05 – Create a list of active IP addresses with key ports included  
-	4. 2.07 – Scan ICS Equipment Ports  
-	5. 2.06 – Scan all ports of all hosts on given network segment   
-	6. Exit  
+```bash
+chmod +x NmapScript.sh
+```
 
-	Selection:> 1  
-	```  
+* For Task 2.04, run the NmapScript.sh and choose menu 1:
 
-* A log will be generated to NmapScript.txt and the output will be shown to the user:  
-	```  
-	Selection:> 1  
-	[+] Starting Nmap 7.80 ( https://nmap.org ) at 2020-06-26 13:47 EDT  
-	[+] Nmap scan report for 192.168.69.2  
-	[+] Host is up (0.00084s latency).  
-	[+] Not shown: 999 closed ports  
-	[+] PORT   STATE SERVICE VERSION  
-	[+] 53/tcp open  domain  dnsmasq 2.55  
-	[+] MAC Address: 00:50:56:EB:3D:1D (VMware)  
+```
+Selection:> 1
+[+] Starting Nmap...
+```
 
-	[+] Service detection performed. Please report any incorrect results at https://nmap.org/submit/.  
-	[+] Nmap done: 256 IP addresses (6 hosts up) scanned in 17.23 seconds  
-	```  
+* For Task 2.02 (active IP list):
 
-* For Task 2.04, run the NmapScript.sh and choose menu 2  
-	```  
-	Selection:> 2  
-	[+] 192.168.69.1 is live!  
-	[+] 192.168.69.2 is live!  
-	[+] 192.168.69.142 is live!  
-	[+] 192.168.69.254 is live!  
-	[+] 192.168.69.132 is live!  
-	[+] 192.168.69.137 is live!  
-	```
+```
+Selection:> 2
+[+] 192.168.69.1 is live!
+```
 
-* For Task 2.02, run the NmapScript.sh and choose menu 3. It is important to provide key ports interested. If any ports are open on the targets, they will get displayed; otherwise, you will have no output.  
-	```  
-	Selection:> 3  
-	[+] Starting Nmap 7.80 ( https://nmap.org ) at 2020-06-26 13:56 EDT  
-	[+] Nmap done: 256 IP addresses (6 hosts up) scanned in 3.41 seconds  
-	```  
+* For Task 2.05 (key ports):
 
-* For Task 2.07, run the script and choose menu 4. This will scan for ports on ICS equipment. This will warn you if you would like to continue.  
-	```  
-	Selection:> 4  
-	[!] It is possible for Scada devices to fail with an Nmap scan, do you want to continue? Y  
-	[+] Starting Nmap 7.80 ( https://nmap.org ) at 2020-06-26 13:59 EDT  
-	[+] Nmap done: 256 IP addresses (6 hosts up) scanned in 3.41 seconds  
-	```  
+```
+Selection:> 3
+[+] Starting Nmap...
+```
 
-* For Task 2.06, run the script and choose menu 5. This will scan for all ports on the target/target list.  
-	```  
-	Selection:> 5  
-	[+] Starting Nmap 7.80 ( https://nmap.org ) at 2020-06-26 14:01 EDT  
-	[+] Nmap done: 256 IP addresses (6 hosts up) scanned in 3.41 seconds  
-	```  
+* For Task 2.07 (this task — ICS scan):
 
-## Dependencies  
-* If NMap is not installed:  
-	```  bash
-	sudo apt install nmap  
-	```  
+```
+Selection:> 4
+[!] It is possible for SCADA devices to fail with an Nmap scan, do you want to continue? Y
+[+] Starting Nmap 7.80 ( https://nmap.org )
+[+] Nmap done: 256 IP addresses (6 hosts up) scanned in 3.41 seconds
+```
 
+> **Operator Note:** This mode is targeted for ICS systems. However, even so, it may disrupt sensitive equipment. Use the `--scan-delay` and `-T0` or `-T1` flags in custom scans if needed.
 
-## Other available tools  
-* Angry IP scanner  
+* For Task 2.06 (full port scan):
+
+```
+Selection:> 5
+[+] Starting Nmap...
+```
+
+## Dependencies
+
+* If Nmap is not installed:
+
+```bash
+sudo apt install nmap
+```
+
+> **Operator Note:** Windows: `choco install nmap` or official installer.
+
+## Other available tools
+
+* Angry IP Scanner  
 * Advanced IP Scanner  
-* Solarwinds IP Scanner  
+* Solarwinds IP Scanner
 
+> **Operator Note:** These tools are NOT recommended for ICS scanning — only use Nmap or highly controlled protocols for ICS/SCADA equipment.
 
-## References  
+## References
+
 [NMAP Site](https://nmap.org)  
 [LAN Spy](http://lantricks.com/lanspy/)  
-[NMAP Man Pages Nmap Man page](http://linuxcommand.org/man_pages/nmap1.html)  
-[Nmap Network Scanning –online book](https://nmap.org/book/toc.html)  
+[NMAP Man Pages](http://linuxcommand.org/man_pages/nmap1.html)  
+[Nmap Network Scanning Book](https://nmap.org/book/toc.html)
 
+---
 
-## Revision History  
+## Operator Recommendations and Additional Tools
+
+### Operator Checklist
+
+- [ ] Obtain written approval before scanning ICS/SCADA environments.
+- [ ] Use NmapScript.sh menu 4 for this task.
+- [ ] If custom scanning, use `-T0` or `-T1` to minimize impact.
+- [ ] Save NmapScript.txt results with timestamp and segment identifier.
+- [ ] Validate results with facility engineers before escalating.
+
+### Tools by Platform
+
+| Platform | Tool | Purpose |
+|----------|------|---------|
+| Universal | Nmap, NmapScript.sh | Primary ICS scan tool (use with caution) |
+| Windows/Linux/macOS | Nmap CLI with timing/scanning options | Low and slow ICS scanning |
+| Mobile | Fing | NOT recommended for ICS, use only for basic discovery if permitted |
+
+### Example Alternate Commands (Recommended for ICS)
+
+#### Nmap low impact ICS scan:
+
+```bash
+nmap -sS -p 1-1024 --scan-delay 1s -T1 192.168.1.0/24
+```
+
+#### Nmap SCADA targeted (Modbus/TCP):
+
+```bash
+nmap -sU -p 502 --script modbus-discover 192.168.1.0/24
+```
+
+> **Operator Note:** Use SCADA-specific NSE scripts carefully and only with approval.
+
+### Best Practices
+
+- Avoid scanning during operational hours.
+- Consult with ICS/SCADA vendors or site engineers.
+- Log, review, and archive all scan artifacts.
+
+---
+
+## Revision History
+
+| Date | Version | Description | Author |
+|------|---------|-------------|--------|
+| 2025-05-02 | 1.8 | Full original + enriched ICS/SCADA operator guidance and recommendations | Leo |
