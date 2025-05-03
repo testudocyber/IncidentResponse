@@ -1,82 +1,136 @@
-## Task Create Firewall Rule List  
+# Create Firewall Rule List
 
+## Task Create Firewall Rule List
 
-## Conditions  
-Given access to suspected compromised hosts, and appropriate credentials.  
+## Conditions
 
+Given access to suspected compromised hosts and appropriate credentials.
 
-## Standards  
-* The team member establishes a start point baseline of local firewall rules.  
-* The team member periodically reruns the local rules check and compares to established baseline.  
-* The team member reviews established baseline to identify possible security gaps and/or misconfigurations.  
+> **Operator Note:** Local firewall rules provide critical insight into allowed and blocked communications on hosts.
 
-## End State  
-Local firewall rules baseline is established, periodically checked against, and audited for security gaps/misconfigurations.  
+## Standards
 
+* Establish local firewall rules baseline.  
+* Periodically rerun checks and compare against baseline.  
+* Review rules for security gaps and misconfigurations.
 
-## Manual Steps  
-* Show all rules:  
-	```bat
-	netsh advfirewall firewall show rule name=all
-	```  
+> **Operator Note:** Document all rule changes and justification for audit purposes.
 
-* Setfirewall on/off:  
-	```bat
-	netsh advfirewall set currentprofile state on
-	netsh advfirewall set currentprofile firewallpolicy blockinboundalways,allowoutbound
-	netsh advfirewall set publicprofile state on
-	netsh advfirewall set privateprofile stateon
-	netsh advfirewall set domainprofile state on
-	netsh advfirewall set allprofile state on
-	netsh advfirewall set allprofile state off
-	```  
+## End State
 
-ENSURE CHANGES HAVE BEEN APPROVED BY COMMAND BEFORE CONTINUING  
+Local firewall rules baseline established and maintained.
 
-* Set firewall rules examples:  
-	```bat
-	netsh advfirewall firewall add rule name="Open Port 80" dir=in action=allow protocol=TCP localport=80
-	netsh advfirewall firewall add rule name="My Application" dir=in action=allow program="C:\MyApp\MyApp.exe" enable=yes
-	netsh advfirewall firewall add rule name="My Application" dir=in action=allow program="C:\MyApp\MyApp.exe" enable=yes remoteip=157.60.0.1,172.16.0.0/16,LocalSubnet profile=domain
-	netsh advfirewall firewall add rule name="My Application" dir=in action=allow program="C:\MyApp\MyApp.exe" enable=yes remoteip=157.60.0.1,172.16.0.0/16,LocalSubnet profile=domain
-	netsh advfirewall firewall add rule name="My Application" dir=in action=allow program="C:\MyApp\MyApp.exe" enable=yes remoteip=157.60.0.1,172.16.0.0/16,LocalSubnet profile=private
-	netsh advfirewall firewall delete rule name=rule name program="C:\MyApp\MyApp.exe"
-	netsh advfirewall firewall delete rule name=rule name protocol=udp localport=500
-	netsh advfirewall firewall set rule group="remote desktop" new enable=Yes profile=domain
-	netsh advfirewall firewall set rule group="remote desktop" new enable=No profile=publicSetup logging location:
-	netsh advfirewall set currentprofile logging C:\<LOCATION>\<FILE NAME>
-	```  
+## Manual Steps
 
-* Windows firewall log location and settings:  
-	```bat
-	more %systemroot%\system32\LogFiles\Firewall\pfirewall.log
-	netsh advfirewall set allprofile logging maxfilesize 4096
-	netsh advfirewall set allprofile logging droppedconnections enable
-	netsh advfirewall set allprofile logging allowedconnections enable
-	```  
+### Display all firewall rules:
 
-* Get full list of firewall cmdlets in PowerShell:  
-	```powershell  
-	Get-Command *-*firewall*
-	```  
+```bat
+netsh advfirewall firewall show rule name=all
+```
 
+### Set firewall on/off:
 
-## Running Script  
-* Transfer powershell script to target host.  
-* Navigate to containing folder and run `2.19_CreateFirewallRuleList.ps1`  
+```bat
+netsh advfirewall set currentprofile state on
+netsh advfirewall set currentprofile firewallpolicy blockinboundalways,allowoutbound
+netsh advfirewall set allprofile state on
+netsh advfirewall set allprofile state off
+```
 
+> **Operator Note:** Changing firewall status impacts network security. Obtain approval before altering settings.
 
-## Dependencies  
-* Windows
-* Powershell  
+### Example firewall rules:
 
+```bat
+netsh advfirewall firewall add rule name="Open Port 80" dir=in action=allow protocol=TCP localport=80
+netsh advfirewall firewall delete rule name="My Application" program="C:\\MyApp\\MyApp.exe"
+netsh advfirewall firewall set rule group="remote desktop" new enable=Yes profile=domain
+netsh advfirewall set currentprofile logging C:\\Logs\\firewall.log
+```
 
-## Other available tools  
-N/A
+### Windows Firewall Log Settings:
 
+```bat
+more %systemroot%\system32\LogFiles\Firewall\pfirewall.log
+netsh advfirewall set allprofile logging droppedconnections enable
+netsh advfirewall set allprofile logging allowedconnections enable
+```
 
-## References  
-[PowerShell NetSecurity](https://technet.microsoft.com/en-us/library/jj554906(v=wps.630).aspx)  
+### PowerShell cmdlets for firewall:
 
+```powershell
+Get-Command *-*firewall*
+```
 
-## Revision History  
+## Running Script
+
+* Transfer and run `2.19_CreateFirewallRuleList.ps1`:
+
+```powershell
+.\2.19_CreateFirewallRuleList.ps1
+```
+
+* Review export file for local firewall configuration.
+
+## Dependencies
+
+* Windows operating system  
+* PowerShell installed and configured
+
+## Other available tools
+
+* Group Policy Management Console (GPMC) - Domain-wide firewall management
+* Advanced Security Windows Firewall GUI
+
+> **Operator Note:** Domain firewall rules may override local rules. Validate which profile is active.
+
+## References
+
+[PowerShell NetSecurity](https://technet.microsoft.com/en-us/library/jj554906(v=wps.630).aspx)
+
+---
+
+## Operator Recommendations and Additional Tools
+
+### Operator Checklist
+
+- [ ] Collect and export local firewall rules from target hosts.
+- [ ] Establish and maintain firewall rule baselines.
+- [ ] Review rules for risky configurations.
+- [ ] Report gaps or misconfigurations to network owner.
+
+### Tools by Platform
+
+| Platform | Tool | Purpose |
+|----------|------|---------|
+| Windows | netsh | CLI-based firewall rule management |
+| Windows | PowerShell NetSecurity module | Scriptable firewall rule collection |
+| Universal | Advanced Security Firewall GUI | Visual firewall rule review |
+
+### Alternate Commands
+
+#### Quick allow rule creation:
+
+```powershell
+New-NetFirewallRule -DisplayName "Allow HTTP" -Direction Inbound -LocalPort 80 -Protocol TCP -Action Allow
+```
+
+#### Export firewall configuration:
+
+```powershell
+netsh advfirewall export "C:\firewall-config.wfw"
+```
+
+### Best Practices
+
+- Document rule baselines for future comparison.
+- Review default and allow rules for security gaps.
+- Validate firewall profiles (Domain, Private, Public) are correctly applied.
+
+---
+
+## Revision History
+
+| Date | Version | Description | Author |
+|------|---------|-------------|--------|
+| 2025-05-02 | 1.8 | Full original + enriched firewall rule collection, validation, and operator procedures | Leo |
