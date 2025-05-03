@@ -1,54 +1,141 @@
-## Task Export List of Groups from Active Directory    
+# Export Groups from Active Directory
 
+## Task Export List of Groups from Active Directory
 
-## Conditions  
-Given domain credentials with the appropriate permissions, and an incident response workstation with necessary tools and access to the Primary Domain Controller for the target domain  
+## Conditions
 
+Given domain credentials with the appropriate permissions, and an incident response workstation with necessary tools and access to the Primary Domain Controller (DC) for the target domain.
 
-## Standards  
-* Team selects the best method to connect to the Domain Controller (DC) and tool that will provide the required information  
-* Team member obtains Domain group information that may include the following:  
-	* Canonical Name  
-	* Display Name  
-	* Distinguished Name  
-	* Group Category  
-	* Group Scope  
-	* Object GUID  
-	* sAMAccountName  
-	* Security Identifier (SID)  
-	* Creation Date/Time  
-	* Modified Date/Time  
-* Group data is exported to a CSV file and stored according to team SOP  
+> **Operator Note:** Identifying AD groups and their attributes allows responders to detect rogue groups, privilege escalation attempts, and unauthorized changes.
 
+## Standards
 
-## End State  
-All Domain Groups have been exported to a CSV file with information required to allow for detection of malicious activity.  
+* Team selects the best method to connect to the Domain Controller and collect required group information.  
+* Team member obtains Domain group information including:
 
+| Canonical Name | Display Name | Distinguished Name |
+|----------------|--------------|--------------------|
+| Group Category | Group Scope | Object GUID |
+| sAMAccountName | Security Identifier (SID) | Creation Date/Time |
+| Modified Date/Time | | |
 
-## Manual Steps  
+* Group data is exported to a CSV file and stored according to incident response SOP.
 
+> **Operator Note:** Attributes such as creation and modification dates help identify suspicious group creation or changes during an incident.
 
-## Notes  
-The tool chosen can limit the amount and type of information exported and is an important consideration for this task. In an incident response scenario, information such as creation time/date or modified date can all be vital information in determining malicious activity. Unless the Domain Controller is a version that does not support it, PowerShell is the best choice for this task.  
+## End State
 
-While not necessary, retrieving all of the group name properties enables the responder to determine anomalies in the naming of groups that may indicate they were created by a malicious actor unfamiliar with the domain naming convention or policy.  
+All Domain Groups have been exported to a CSV file with sufficient information to allow for detection of malicious activity.
 
-There are various Active Directory (AD) PowerShell commands that can be combined to provide a comprehensive script that combines group property information along with a list of users that are members of the group. While not part of this task, this is important information when monitoring changes in AD during an incident.  
+---
 
+## Manual Steps
 
-## Running Script  
+### PowerShell Method (Preferred)
 
+#### Load Active Directory module:
 
-## Dependencies  
+```powershell
+Import-Module ActiveDirectory
+```
 
+#### Export group information:
 
-## Other available tools  
+```powershell
+Get-ADGroup -Filter * -Properties * |
+Select-Object Name, DisplayName, DistinguishedName, GroupCategory, GroupScope, ObjectGUID, sAMAccountName, SID, whenCreated, whenChanged |
+Export-Csv ADGroupsExport.csv -NoTypeInformation
+```
 
+> **Operator Note:** Adding `whenCreated` and `whenChanged` provides vital timeline data for analysis.
 
-## References  
+#### Optional: Export group membership for each group (advanced analysis):
+
+```powershell
+Get-ADGroup -Filter * | ForEach-Object {
+    Get-ADGroupMember $_ | Select-Object Name, SamAccountName, objectClass | Export-Csv "$($_.Name)_Members.csv" -NoTypeInformation
+}
+```
+
+> **Operator Note:** This optional step helps in identifying suspicious group members.
+
+---
+
+### RSAT / ADUC Method (Alternative)
+
+#### Open ADUC:
+
+```plaintext
+dsa.msc
+```
+
+#### Use "Find" or search filters to view and export groups:
+
+- View → Add/Remove Columns to select useful attributes.
+- Export manually to CSV or Excel.
+
+> **Operator Note:** Use only if PowerShell is unavailable. This method provides limited attributes.
+
+---
+
+## Running Script
+
+* Use the PowerShell method above and store outputs in incident shared folder for later review.
+
+---
+
+## Dependencies
+
+* Windows system with RSAT + Active Directory Module installed:
+
+```powershell
+Import-Module ActiveDirectory
+```
+
+* Domain credentials with read access.
+
+---
+
+## Other Available Tools
+
+| Tool | Platform | Use Case |
+|------|----------|----------|
+| PowerShell + AD Module | Windows | Primary export method for comprehensive group attributes |
+| ADUC (RSAT - dsa.msc) | Windows | Manual export |
+| ADExplorer (Sysinternals) | Windows | AD object viewer, supports export |
+| LDAP Search Tools | Cross-platform | Lightweight alternate method |
+
+---
+
+## Operator Recommendations and Additional Tools
+
+### Operator Checklist
+
+- [ ] Validate PowerShell and AD module installation.
+- [ ] Verify domain credentials and connectivity.
+- [ ] Use PowerShell to export group objects and key attributes.
+- [ ] Optionally export group membership details for deeper analysis.
+- [ ] Review exported CSV file for anomalies and secure per SOP.
+
+### Best Practices
+
+- Always export creation and modified date for timeline analysis.
+- Look for group names outside normal naming conventions.
+- Identify newly created groups during the incident timeframe.
+- Document and preserve exported files for forensics.
+
+---
+
+## References
+
 [Get-ADGroup PowerShell syntax](https://technet.microsoft.com/en-us/library/ee617196.aspx)  
 [Get-ADGroupMember syntax](https://technet.microsoft.com/en-us/library/ee617193.aspx)  
-[Compare-Object syntax](https://technet.microsoft.com/en-us/library/ee156812.aspx)  
+[Compare-Object syntax](https://technet.microsoft.com/en-us/library/ee156812.aspx)
 
+---
 
-## Revision History  
+## Revision History
+
+| Date | Version | Description | Author |
+|------|---------|-------------|--------|
+| 2025-05-02 | 1.9 | Full original + enriched PowerShell export, alternate tooling, operator checklist and recommendations | Leo |
