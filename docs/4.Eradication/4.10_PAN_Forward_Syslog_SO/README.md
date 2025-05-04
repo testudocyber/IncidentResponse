@@ -1,4 +1,4 @@
-# 4.09.1 PAN Forward Syslog to Security Onion
+# PAN Forward Syslog to Security Onion
 
 ## Task
 
