@@ -1,37 +1,36 @@
-# 4.09.4 Evaluate Network Baseline
+# 4.09.3 Evaluate Network Baseline (Upgraded)
 
 ## Task
 
-Evaluate and establish a baseline of normal network activity to identify anomalies and suspicious behavior during an incident response.
+Evaluate and establish a baseline of normal network activity and detect deviations that may indicate malicious behaviors such as lateral movement, beaconing, exfiltration, or command and control (C2) activity.
 
 ---
 
 ## Conditions
 
-Given a deployed Security Onion instance, access to network traffic (via full packet capture and/or NetFlow), and knowledge of the target environment or mission network layout.
+Given access to Security Onion, Zeek logs, Suricata alerts, full packet capture (PCAP), and knowledge of the environment’s expected network layout and mission roles.
 
 ---
 
 ## Standards
 
-* Collect representative data of normal network behavior.
-* Document "normal" hosts, ports, protocols, services, and traffic patterns.
-* Identify deviations or anomalies that may indicate lateral movement, beaconing, or command and control (C2) activity.
-* Validate findings against known network diagrams, asset inventories, or mission briefs.
+* Collect and analyze representative data to understand "normal" network traffic.
+* Document common ports, protocols, hosts, destinations, and communication patterns.
+* Identify deviations or anomalies that do not fit into the established baseline.
+* Validate anomalies against threat intelligence and Indicators of Compromise (IOCs).
 
 ---
 
 ## End State
 
-A documented network baseline is created, providing a reference point for detecting abnormal activity and informing containment and eradication efforts.
+A network baseline is documented and deviations from normal behavior are identified and tagged for escalation or eradication actions.
 
 ---
 
 ## Notes
 
-- Baselines should be dynamic → update as more is learned during an engagement.
-- Expect some "gray" traffic → not everything unknown is immediately malicious, but all anomalies must be explained or investigated.
-- Capturing a good baseline early allows faster anomaly detection later.
+- Baselining allows identification of stealthy and advanced techniques which may not trigger signature-based alerts.
+- Expect some unknown or ambiguous traffic — anomalies are not always malicious but must be explained.
 
 ---
 
@@ -39,134 +38,115 @@ A documented network baseline is created, providing a reference point for detect
 
 ### Step 1: Review Available Network Telemetry
 
-Use Security Onion to determine what data sources you have:
-
-- Zeek logs (connection logs, DNS logs, SSL/TLS metadata)
-- Suricata/Snort alerts
-- Full PCAP (via Stenographer/SO)
-- NetFlow (if configured)
-
-Verify data sources:
+Confirm which telemetry sources are active on Security Onion:
 
 ```bash
 sudo so-status
 ```
 
-Check that Zeek and Stenographer services are running.
+- **Zeek** → Metadata of every connection (conn.log), DNS, SSL/TLS, HTTP, files.
+- **Suricata** → IDS/IPS alerts (snort-like signature matches).
+- **Stenographer (PCAP)** → Full packet capture.
+- **Elastic/Kibana** → Easy searching and visualization.
+
+> **Operator Note:** If Zeek is down, restart sensors before proceeding. Zeek is critical for establishing the baseline.
 
 ---
 
-### Step 2: Capture Representative Network Traffic
+### Step 2: Capture and Identify "Normal" Network Behavior
 
-Use `tcpdump` to capture live traffic for review:
+#### Focus Areas
+
+| Area | What to Baseline | Why |
+|------|------------------|-----|
+| Internal to Internal | AD, DNS, SMB, RDP, File Shares | Identify lateral movement pathways |
+| Internal to External | Web, Email, VPN | Identify normal business flows |
+| Inbound | VPN, Reverse Proxies | Ensure only expected services are exposed |
+| Outbound to Unusual Destinations | Rare external IPs/Domains | Potential C2 or data exfiltration |
+
+#### Example Kibana Queries:
+
+- Find top talkers:
+
+```text
+event.dataset:zeek.conn AND network.direction:"outbound"
+```
+
+- Find DNS queries:
+
+```text
+event.dataset:zeek.dns
+```
+
+- Find SSL connections (encrypted sessions):
+
+```text
+event.dataset:zeek.ssl
+```
+
+> **Operator Note:** Record observed legitimate hosts and expected domains (office365.com, google.com, internal NTP servers).
+
+---
+
+### Step 3: Identify and Document Normal Services and Ports
+
+Using Zeek conn logs:
 
 ```bash
-sudo tcpdump -i <interface> -w /nsm/baseline/baseline.pcap
+zcat /nsm/zeek/logs/current/conn.log.gz | zeek-cut id.orig_h id.resp_h id.resp_p service
 ```
 
-Example:
+Example results:
 
-```bash
-sudo tcpdump -i eth0 -w /nsm/baseline/initial_baseline.pcap
+```
+192.168.1.10 192.168.1.1 53 dns
+192.168.1.10 192.168.1.5 445 smb
+192.168.1.10 8.8.8.8 443 ssl
 ```
 
-> **Operator Note:** Try to capture multiple times of day if feasible → work hours vs after hours.
+Document in table format:
+
+| Source IP | Dest IP | Port | Service | Notes |
+|-----------|---------|------|---------|-------|
+| 192.168.1.10 | 192.168.1.5 | 445 | SMB | Normal domain traffic |
+| 192.168.1.10 | 8.8.8.8 | 443 | SSL | Expected web traffic |
 
 ---
 
-### Step 3: Analyze Network Traffic
+### Step 4: Identify Abnormal Patterns and IOC Signals
 
-Use the following tools:
+#### IOC and Suspicious Signals to Search For
 
-#### Kibana (Security Onion Interface)
+| Indicator Type | How to Find | Example IOC |
+|----------------|-------------|-------------|
+| Beaconing Behavior | Zeek conn logs → periodic, regular intervals | conn.log → Check duration/intervals |
+| External Connections to Rare IPs | Zeek conn logs + threat feeds | IP addresses → known malicious IPs |
+| DNS Tunneling | Zeek dns.log → very long query names | suspicious.domain.exfil.data.com |
+| Non-standard Ports | Zeek conn.log → high or unexpected ports | RDP (3389) → from internal clients |
+| SMB/LDAP Lateral Movement | Zeek smb.log or conn.log → host-to-host SMB traffic | Multiple internal hosts communicating unexpectedly |
+| Cleartext Credentials | Zeek http.log, Suricata alerts | HTTP login forms over port 80 |
+| Unusual User-Agent Strings | Zeek http.log | Custom User-Agent indicating tool-based C2 |
 
-- Search Zeek logs:
-  - `conn.log` → review top talkers, top protocols.
-  - `dns.log` → identify DNS usage patterns.
-  - `ssl.log` → identify common TLS communication.
-
-Example search for top destinations:
-
-```
-_source:"conn.log" AND event_type:connection_summary
-```
-
-#### Wireshark (Local Analysis)
-
-- Download `baseline.pcap` to local analyst laptop.
-- Open in Wireshark.
-- Use the following filters:
-
-```text
-ip.addr == <critical_server_IP>
-```
-
-```text
-tcp.port == 3389
-```
-
-```text
-dns
-```
-
-- Identify:
-  - Frequent communications
-  - Long-lived sessions
-  - Unexpected external connections
-  - High data volume transfers
+> **Operator Note:** Use correlation and time-series views in Kibana to look for repeat patterns or relationships between hosts.
 
 ---
 
-### Step 4: Establish the Baseline
+### Step 5: Validate with Network Owners and Documentation
 
-Document:
+- Confirm suspicious findings with network administrators or asset owners.
+- Update baseline with verified "normal" activity.
+- Flag unresolved anomalies for IR escalation.
 
-- Critical internal systems and normal communication partners
-- Normal external IPs/domains contacted
-- Common protocols used (HTTP, HTTPS, RDP, SMB, etc.)
-- Expected port usage
-- Typical volume and size of traffic flows
-
-Sample format:
-
-| Host/IP | Normal Communications | Protocols | Comments |
-|---------|------------------------|-----------|----------|
-| 192.168.1.10 | 192.168.1.1 (Gateway), DNS Server, File Server | DNS, SMB | Normal AD traffic |
-| 192.168.1.15 | External vendor IP | HTTPS | Monitored VPN connection |
-
----
-
-### Step 5: Identify Anomalies
-
-Look for:
-
-- Hosts communicating externally with rare IPs/domains
-- Beacon-like traffic (small, regular packet sizes)
-- Use of unusual ports (ex: high ports, custom C2 protocols)
-- Lateral movement indicators (RDP, SMB, WMI across hosts)
-- Large volume data exfiltration (big POSTs, downloads)
-
-Tag all findings for further investigation.
-
----
-
-### Step 6: Validate Findings with Asset Owners
-
-If possible:
-
-- Confirm known/unknown hosts with system owners or network administrators.
-- Update baseline document with clarifications.
-
-> **Operator Note:** Network diagrams are often incomplete or outdated — direct confirmation is better.
+> **Operator Note:** Always ask → many false positives can be ruled out by simple questions to owners.
 
 ---
 
 ## Dependencies
 
-* Working Security Onion deployment.
-* Access to Zeek logs, full packet capture (PCAP), and Kibana.
-* TCPDump/Wireshark.
-* Analyst-level access to SO or network taps.
+* Security Onion sensors functioning (Zeek, Suricata, PCAP).
+* Access to Kibana and/or CLI for log review.
+* Understanding of network architecture and mission profile.
+* Access to threat intelligence (MISP, commercial feeds, open-source feeds).
 
 ---
 
@@ -174,10 +154,10 @@ If possible:
 
 | Tool | Platform | Installation | Usage |
 |------|----------|--------------|-------|
-| Zeek | Security Onion | Built-in | Deep network metadata parsing |
-| Suricata/Snort | Security Onion | Built-in | IDS alerts |
+| Zeek | Built-in (Security Onion) | Native | Network metadata analysis |
 | Wireshark | Cross-platform | Package manager | PCAP analysis |
-| tcpdump | Linux | Built-in | Raw packet capture |
+| ELK / Kibana | Built-in (Security Onion) | Native | Search and visualization |
+| Threat Intelligence Feeds | External | N/A | IOC correlation |
 
 ---
 
@@ -185,26 +165,26 @@ If possible:
 
 ### Operator Checklist
 
-- [ ] Confirm all network sensors are operational (Zeek, Suricata, Stenographer).
-- [ ] Capture baseline traffic via tcpdump and Zeek logs.
-- [ ] Document normal hosts, services, ports, and protocols.
-- [ ] Identify and tag suspicious behaviors or anomalies.
-- [ ] Validate suspicious entries with asset owners or IR team leads.
+- [ ] Validate all telemetry sources are operational.
+- [ ] Collect normal traffic data from Zeek logs and PCAP.
+- [ ] Document internal, outbound, and inbound traffic patterns.
+- [ ] Identify anomalies → beaconing, rare destinations, unusual ports.
+- [ ] Validate anomalies with owners or mission lead.
+- [ ] Update baseline documentation.
 
 ### Best Practices
 
-- Capture baselines during multiple shifts if possible.
-- Update baseline throughout mission lifecycle as new information becomes available.
-- Be cautious of "quiet C2" — beaconing may be subtle and blend in with normal traffic.
-- Preserve original PCAP captures → forensic review later may be necessary.
+- Use time-based views → stealthy C2 beaconing may only show over long periods.
+- Use threat intel enrichments where possible → known bad IPs/domains can highlight hidden threats.
+- Build simple playbooks for common protocols → know what SMB, DNS, SSL normally look like.
 
 ---
 
 ## References
 
 - [Zeek Documentation](https://docs.zeek.org/en/current/)
-- [Wireshark Display Filter Reference](https://wiki.wireshark.org/DisplayFilters)
 - [Security Onion Docs](https://docs.securityonion.net/en/latest/)
+- [Wireshark Display Filter Reference](https://wiki.wireshark.org/DisplayFilters)
 
 ---
 
@@ -212,4 +192,4 @@ If possible:
 
 | Date | Version | Description | Author |
 |------|---------|-------------|--------|
-| 2025-05-02 | 1.0 | Created from scratch with deep operator guidance and procedural context | Leo |
+| 2025-05-02 | 2.0 | Fully expanded version with IOCs, examples, and deep operator context | Leo |
