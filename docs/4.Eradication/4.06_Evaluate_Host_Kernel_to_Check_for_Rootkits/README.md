@@ -1,81 +1,185 @@
-# Task Evaluate Host Kernel to Check for Rootkits  
+# 4.06 Evaluate Host Kernel to Check for Rootkits
 
+## Task
 
-## Conditions  
-Given a suspected compromised Windows desktop computer system, a local administrator account, incident response tools, and one or more Indicators of Compromise (IOCs).  
+Evaluate Host Kernel to Check for Rootkits
 
+## Conditions
 
-## Standards  
-* The team member annotates the system name, serial number, manufacturer, and time of action in the Incident Log.   
-* The team member inserts media that contains the rootkit detection application.   
-* The team member runs the rootkit detection application with the correct parameters and exports the data to the local drive, external USB media, or network share. a. Removal of the rootkit is not part of this evaluation, only identification. Removal is part of Task 4.25: Stop Malware – Rootkit.  
-* Review screen or tool log file for indicators of the presence of a rootkit against provided IOCs  
+Given a suspected compromised Windows desktop computer system, a local administrator account, incident response tools, and one or more Indicators of Compromise (IOCs).
 
+---
 
-## End State  
-rootkit-related elements are identified  
+## Standards
 
+* The team member annotates the system name, serial number, manufacturer, and time of action in the Incident Log.
+* The team member inserts media that contains the rootkit detection application.
+* The team member runs the rootkit detection application with the correct parameters and exports the data to the local drive, external USB media, or network share.
+  * Note: Removal of the rootkit is not part of this evaluation, only identification.
+* Review screen or tool log file for indicators of the presence of a rootkit against provided IOCs.
 
-## Notes  
-When a rootkit is suspected, there are various considerations to consider when determining the best method to complete this task. Based on the IOCs some research of the suspected rootkit may preclude the connection of USB drives which may in turn be compromised. This task can be accomplished remotely using PSExec or batch file. Some tools require renaming before being copied to the compromised machine and should be covered in their documentation.   
+---
 
+## End State
 
-## Manual Steps for Linux  
+Rootkit-related elements are identified.
 
+---
 
-### Chkrootkit  
+## Notes
 
-* Install chkrootkit  
-	```bash
-	sudo apt-get install chkrootkit
-	```
+When a rootkit is suspected, there are various considerations for completing this task:
 
-* You can run chkrootkit once installation has been complete.  
-	```bash
-	chkrootkit
-	```
+- Some rootkits may target removable storage or detection tools themselves.
+- Use caution when introducing tools via USB → network transfer or remote execution (e.g. PSExec, WinRM) is preferable.
+- Some tools may need to be renamed to avoid detection/blocking by malware.
 
-* Investigate any findings  To view the help section for chkrootkit use the following command  
-	```bash
-	chkrootkit -h
-	```
+---
 
+## Manual Steps
 
-### Rkhunter  
-* Install rkhunter  
-	```bash
-	sudo apt-get install rkhunter
-	```
+### For Linux
 
-* View the options for rkhunter by typing the following command  
-	```bash
-	rkhunter
-	```
+#### Chkrootkit
 
-* Run rkhunter  
-	```bash
-	rkhunter -c
-	```
+* Install chkrootkit
 
-* View results in the terminal or read the log file. The location for the log file is located in /var/log/rkhunter.log  
-	```bash
-	cat /var/log/rkhunter.log
-	```
+```bash
+sudo apt-get install chkrootkit
+```
 
-* Investigate any findings  
+* Run chkrootkit
 
+```bash
+chkrootkit
+```
 
-## Dependencies  
+* Investigate any findings
 
+```bash
+chkrootkit -h
+```
+
+---
+
+#### Rkhunter
+
+* Install rkhunter
+
+```bash
+sudo apt-get install rkhunter
+```
+
+* Run rkhunter with check mode
+
+```bash
+rkhunter -c
+```
+
+* Review log file
+
+```bash
+cat /var/log/rkhunter.log
+```
+
+* Investigate any findings.
+
+---
+
+### For Windows
+
+#### GMER
+
+* Download GMER (http://www.gmer.net)
+* Run as Administrator.
+* Allow scan to complete.
+* Review rootkit and hidden process detection results.
+* Save log for incident documentation.
+
+#### TDSSKiller
+
+* Download TDSSKiller (https://usa.kaspersky.com/downloads/tdsskiller)
+* Run TDSSKiller as Administrator.
+* Select "Change parameters" and enable deep scan options.
+* Run scan and review results.
+* Save scan log for records.
+
+#### McAfee Rootkit Remover
+
+* Download (https://www.mcafee.com/us/downloads/free-tools/rootkitremover.aspx)
+* Run executable and scan system.
+* Review findings and export log.
+
+> **Operator Note:** These tools should be used in Safe Mode or offline when possible to avoid interference from active rootkits.
+
+---
+
+### For macOS
+
+#### KnockKnock (Objective-See)
+
+* Download from https://objective-see.org/products/knockknock.html
+* Run application.
+* Review persistent programs and rootkit indicators.
+
+---
+
+## Dependencies
+
+* Administrative access to system (local admin account or remote access).
+* Incident Response tools (Chkrootkit, Rkhunter, GMER, TDSSKiller, McAfee Rootkit Remover).
+* Secure location for log export and retention.
+* Access to IOC lists for comparison.
+
+---
+
+## Other Available Tools
+
+| Tool | Platform | Installation | Usage |
+|------|----------|--------------|-------|
+| Chkrootkit | Linux | apt or source | Command line scanning |
+| Rkhunter | Linux | apt or source | Command line rootkit checks |
+| GMER | Windows | Download | Hidden process and rootkit detection |
+| TDSSKiller | Windows | Download | Kernel rootkit detection |
+| McAfee Rootkit Remover | Windows | Download | Known rootkit removal tool |
+| KnockKnock | macOS | Download | Persistent and hidden programs inspection |
+
+---
+
+## Operator Recommendations and Additional Tools
+
+### Operator Checklist
+
+- [ ] Record host information and start time in incident log.
+- [ ] Prepare and safely transfer detection tools to target system.
+- [ ] Run detection tool based on OS type and capture findings.
+- [ ] Investigate and interpret results → compare against IOCs.
+- [ ] Export results to secure location.
+- [ ] Report findings to Incident Lead and document results.
+
+### Best Practices
+
+- Avoid USB use on compromised hosts when possible.
+- Perform scans in offline or safe boot environments to avoid interference.
+- Cross-check detection tool findings with forensic images when possible.
+- Retain logs and screenshots for post-incident analysis.
+
+---
 
 ## References
+
 [chkrootkit - Linux](http://www.chkrootkit.org/)  
 [rkhunter - Linux](http://rkhunter.sourceforge.net/)  
 [GMER](http://www.gmer.net)  
-Windows Defender Offline (32-bit and 64-bit downloads from Microsoft.com) 
+[Windows Defender Offline](https://www.microsoft.com/en-us/windows/windows-defender-offline)  
 [TDSSKiller - Kaspersky](http://usa.kaspersky.com/downloads/TDSSKiller)  
 [McAfee Rootkit Remover](http://www.mcafee.com/us/downloads/free-tools/rootkitremover.aspx)  
-[OSSEC](http://ossec.github.io/downloads.html)  
+[KnockKnock (macOS)](https://objective-see.org/products/knockknock.html)
 
+---
 
-## Revision History  
+## Revision History
+
+| Date | Version | Description | Author |
+|------|---------|-------------|--------|
+| 2025-05-02 | 1.0 | Corrected and expanded operator version incorporating Linux, Windows, macOS and advanced techniques | Leo |
