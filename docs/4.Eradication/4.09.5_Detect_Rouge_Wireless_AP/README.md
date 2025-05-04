@@ -1,4 +1,4 @@
-# 4.09.6 Detect and Remove Rogue Wireless Access Points
+# 4.09.5 Detect and Remove Rogue Wireless Access Points
 
 ## Task
 
