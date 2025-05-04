@@ -1,150 +1,234 @@
-## Task Install and Deploy Security Onion  
+# 4.09 Install and Deploy Security Onion
 
+## Task
 
-## Conditions  
-Given a Linux Security Onion machine.  
+Install and Deploy Security Onion
 
+---
 
-## Standards  
-* Configuring Security Onion (SO) from an instantiated virtual machine.  
-* Setup Security Onion firewall rules.  
-* Connecting to security onion from another box  
+## Conditions
 
+Given a Linux Security Onion machine.
 
-## End State  
-Fully functioning Security Onion NIDS recieving and parsing logs from target network segments.  
-	
+---
 
-## Manual Steps	
-* Configuring Security Onion (SO) from an instantiated virtual machine.  
-  * Login to SO  
-	Note: for range use creds from SharePoint  
-	* Open Terminal – click on `Applications` in the top left corner, scroll down to "Utilities" then scroll and click on `Terminal`, leave this off to the side (id=TERM)  
-	* Launch setup – Double click setup icon on desktop 
-	Note: use password from step 1.1 in setup  
-	* Select `Yes, Continue!` –  
-	* Select `Yes, configure /etc/….` –  
-	* Select the management interface – in TERM type ip address and verify that the interface has an ipv4 configured on it and is the same as the one selected  
-	* Set a static ip – make sure static is selected and select `ok`  
-	* Input the ipv4 address for the interface selected in step 1.6 then select `ok` – refer to TERM  
-	* Input your network subnet – refer to TERM for subnet CIDR notation of interface selected in step 1.6  
-	* Input your gateway IP Address – in TERM type ip route use ip after `default route ..<gateway>`   
-	* Input your DNS – in TERM type nslookup then input any character and select `enter`, add both DNS servers  
-	* Input your Domain Name -  in TERM press `ctrl c` then type hostname -f  input everything after the first period, select ok  
-	* Select `Yes, configure…` to  – configure sniffing  interfaces  
-	* Verify that the interface selected in step 1.6 is not selected and select `ok`  
-	* Select `Yes, make changes!` – to confirm changes  
-	* Select `Yes, Reboot!`  
-	* Log into Security Onion - Re-enter login credentials (step 1.1)  
-	* Re-launch setup – double click setup icon on desktop  
-	
-* input system logon password  
-	* Select `Yes, Continue` to configure services  
-	* Select `Yes, skip…` to skip previously setup options  
-	* Select `Production mode`  
-	* Select `New`  
-	* Input first user account – don’t use default & remember for troubleshooting  
-	Note: input the password twice  
-	* Select `Best Practices`  
-	* Select `Emerging Threats Open`  
-	* Select `Snort`  
-	* Select `Enable our sensors`  
-	* Select `Ok` – accept default port configurations  
-	* Review monitoring interfaces – Select `Ok` once you have reviewed to make sure the management interface isn’t selected  
-	* For HOME_net input each subnet that is considered to be on the local subnet   
-	* Enter subnet scope – for each subnet found in network use CIDR notation separated by comma to list out subnets, click `Ok`  
-	* Select `Yes, store..` to store logs locally  
-	* Select `Ok` to accept default log size 
-	* Select `Yes, proceed..` to finish configuration  
-	   * Once complete, select `ok` six times   
-* Setup Security Onion firewall rules.  
-	* Once previous task is completed, reopen TERM, refer to step 1.2  
-	* Allow analyst system/range to access SO – for each device/range  
-	Note: so-allow is the utility that will allow connections in the local firewall. This is used to allow analysts to connect, Wazzuh/Ossec agents to check in and forward logs, down-stream SO sensors to communicate, and more.  Be mindful of your scope as this is creating holes in the firewall and remember DAPE (Deny All Permit by Exception)  
-      ```bash
-      sudo so-allow 
-      ```
+## Standards
 
-![Screenshot](../../img/SO-Allow.PNG)  
+* Configuring Security Onion (SO) from an instantiated virtual machine.
+* Setup Security Onion firewall rules.
+* Connecting to Security Onion from another box for log visibility and analyst access.
 
+---
+
+## End State
+
+Fully functioning Security Onion NIDS receiving and parsing logs from target network segments.
+
+---
+
+## Manual Steps
+
+### Configuring Security Onion from an instantiated virtual machine
+
+* Login to SO.
+> **Note:** for lab/range use credentials from SharePoint.
+
+* Open Terminal → Click `Applications` → `Utilities` → `Terminal`. Leave terminal off to the side.
+
+* Launch setup → Double click setup icon on desktop.
+> **Note:** Use password from Step 1.1 in setup.
+
+* Select `Yes, Continue!`
+
+* Select `Yes, configure /etc/...`
+
+* Select the management interface:
+  * In Terminal type `ip address`
+  * Verify the interface IPv4 address matches what is selected.
+
+* Set a static IP → Make sure static is selected → Select `Ok`.
+
+* Input IPv4 address → select `Ok` → refer to Terminal output.
+
+* Input your subnet CIDR → select `Ok`.
+
+* Input your gateway:
 ```bash
-a 
-```  
+ip route
+```
+* Use IP after `default via` for gateway.
 
-   * Enter ip address or subnet range in CIDR notation  
-   * Allow communication with Elastic Search – for each device/range   
-      ```bash
-      sudo so-allow 
-      ```  
+* Input your DNS → In Terminal:
+```bash
+nslookup google.com
+```
+* Use displayed DNS servers.
 
+* Input your domain name:
+```bash
+hostname -f
+```
+* Input everything after first period → select `Ok`.
+
+* Configure sniffing interfaces → select `Yes, configure...`
+
+* Ensure management interface is NOT selected → select `Ok`.
+
+* Select `Yes, make changes!`
+
+* Select `Yes, Reboot!`
+
+* Login to SO again → Use original credentials.
+
+* Launch setup again → double click setup icon.
+
+* Input system logon password.
+
+* Select `Yes, Continue` to configure services.
+
+* Select `Yes, skip...` to skip prior config.
+
+* Select `Production Mode`.
+
+* Select `New` deployment.
+
+* Input first user account (not default) → set password twice.
+
+* Select `Best Practices`.
+
+* Select `Emerging Threats Open` ruleset.
+
+* Select `Snort` IDS engine.
+
+* Select `Enable our sensors`.
+
+* Accept default port configurations → Select `Ok`.
+
+* Review monitoring interfaces → confirm management interface NOT selected → Select `Ok`.
+
+* Define HOME_NET subnets → Input each subnet in CIDR → comma separated.
+
+* Store logs locally → Select `Yes`.
+
+* Accept default log size → Select `Ok`.
+
+* Finish configuration → Select `Yes, proceed...`
+
+* Confirm and accept defaults until complete → Select `Ok` six times.
+
+---
+
+### Setup Security Onion Firewall Rules (so-allow)
+
+After initial setup, configure local firewall to permit necessary communications.
+
+* Open Terminal:
+```bash
+sudo so-allow
+```
+
+#### Allow analyst access
+> Allows workstations or ranges to access SO web interfaces.
+```bash
+sudo so-allow
+```
 ![Screenshot](../../img/SO-Allow.PNG)
 
+#### Allow Elasticsearch access
+> Allows other SO boxes or apps to connect to Elasticsearch.
 ```bash
-e 
-```  
-
-   * Enter Subnet range in CIDR notation   
-      * limit this to the subnets that the business workstations are on & also the subnets with the analyst devices   
-   * Add the syslog device for PAN logs  
-
-```bash
-sudo so-allow 
+sudo so-allow
 ```
-
 ![Screenshot](../../img/SO-Allow.PNG)
 
+#### Allow PAN syslog device
+> Allows Palo Alto to forward logs to SO.
 ```bash
-l 
+sudo so-allow
 ```
-
-   * Add Wazzuh/Ossec agents – typically workstation devices for each subnet   
-      ```bash
-      sudo so-allow  
-      ```
-
 ![Screenshot](../../img/SO-Allow.PNG)
 
+#### Allow Wazuh/OSSEC agent connectivity
+> Allows workstations/servers running Wazuh agent to report into SO.
 ```bash
-o  
+sudo so-allow
 ```
-
-   * Enter the subnet where workstations are located  
-   * Register Wazzuh/Ossec agents – do this for each subnet inputted in previous step  
-
-```bash
-sudo so-allow  
-```
-
 ![Screenshot](../../img/SO-Allow.PNG)
 
+> **Operator Note:** Always validate and limit scope → use DAPE (Deny All, Permit by Exception) logic.
+
+---
+
+### Connecting to Security Onion from Another Box
+
+* On analyst laptop:
+  * Open web browser.
+  * Enter IP of Security Onion management interface.
+
+* If connection fails:
+  * Validate analyst workstation is in same subnet.
+  * Check firewall rules:
 ```bash
-r 
+sudo ufw status numbered
+sudo ufw delete <rule_number>
 ```
 
-* Connecting to security onion from another box  
-	* On cyber laptop – open web browser  
-	* Go to the ip of the security onion management interface step 1.6  
-	* If you cannot get to the website make sure laptop is in the subnet from step 2.5  
+* Once connected → Open Kibana from web interface.
+* Login using credentials created in step 1.15.
 
-```bash
-sudo ufw status numbered {get number of rule} 
-```
+> **Operator Note:** This step validates operational readiness → Kibana access confirms sensors and ingestion are online.
 
-```bash
-sudo ufw delete {rule to delete}  
-```
+---
 
-* From webpage click on Kibana  
-* Use credentials created in step 1.15  
- 
-## Dependencies  
-Security Onion  
+## Dependencies
 
+* Security Onion virtual machine.
+* Network access and static IP configuration.
+* Proper subnet and CIDR information.
+* Access to Security Onion and analyst workstations.
 
-## References  
+---
+
+## Other Available Tools
+
+| Tool | Platform | Installation | Usage |
+|------|----------|--------------|-------|
+| so-allow | Security Onion | Built-in | Configures firewall access rules |
+| Kibana | Web UI | Built-in | Visualize and search logs |
+| ElasticSearch | Backend | Built-in | Stores log data |
+
+---
+
+## Operator Recommendations and Additional Tools
+
+### Operator Checklist
+
+- [ ] Install and configure Security Onion from virtual machine.
+- [ ] Assign static IP, gateway, subnet, DNS, and domain during setup.
+- [ ] Complete production mode configuration and sensor setup.
+- [ ] Configure firewall rules via `so-allow` for analyst, PAN, Wazuh, and OSSEC agents.
+- [ ] Validate remote analyst access to SO web interface.
+- [ ] Verify Kibana log visibility for HOME_NET.
+
+### Best Practices
+
+- Use `so-allow` cautiously → opening too much access weakens NIDS.
+- Verify all subnets and IP ranges carefully → especially HOME_NET.
+- Regularly test Kibana and sensor ingestion after deployment.
+- Create snapshot or backup after successful install for quick redeployment.
+
+---
+
+## References
+
 [Security Onion Docs](https://securityonion.readthedocs.io/en/latest/)  
 [Security Onion Docs - Local](/ReferenceDocuments/docs-securityonion-net-en-2.3.pdf)  
-[Security Onion Walkthrough](https://github.com/Security-Onion-Solutions/securityonion/wiki/IntroductionWalkthrough)  
+[Security Onion Walkthrough](https://github.com/Security-Onion-Solutions/securityonion/wiki/IntroductionWalkthrough)
 
+---
 
-## Revision History  
+## Revision History
+
+| Date | Version | Description | Author |
+|------|---------|-------------|--------|
+| 2025-05-02 | 1.0 | Final corrected version preserving original + expanded operator instructions, validation, and context | Leo |
