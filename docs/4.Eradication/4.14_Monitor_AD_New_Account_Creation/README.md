@@ -1,106 +1,212 @@
-# Task Monitor DHCP Server for New Reservations  
+# 4.14 Monitor AD New Account Creation (Local + Cloud)
 
+## Task
 
-## Conditions  
-Given a Domain Controller (DC), a domain account with required permissions to query AD, and an incident response workstation  
+Monitor Active Directory (AD) and cloud environments for new user or service account creation events, validate for legitimacy, and document findings.
 
+---
 
-## Standards  
-* Team member queries the DC to obtain the following minimum information:  
-	* Name of user who created the new account  
-	* Security Identifier (SID) of the user who created the new account  
-	* Logon ID – provides semi-unique way to track user activity between reboots of computer  
-	* Name of new user account  
-	* SID of new account  
-	* Domain of new account (only if multiple domains exist)  
-* Team member outputs the account creation data to a comma-separate values (CSV) file and compares the entries to existing user accounts.  
-* Team member checks information on account used to create new accounts against known IOCs or system owner activities to determine if accounts are legitimate.  
-* Optional – Team member re-accomplished Task PR.AC-1.1 to obtain all user account attributes for comparison to existing accounts and verifying malicious activity  
+## Conditions
 
+Given:
 
-## End State 
-All new user or service account creation events are discovered  
+* Access to Domain Controllers (DCs)
+* A domain account with permissions to query AD and read event logs
+* Incident response workstation with PowerShell
+* Access to cloud native logging platforms
 
+---
 
-## Notes  
-There are various ways to do this task but from an incident response perspective the best choice (when supported) is a PowerShell script that queries the DC event logs for account creation event IDs. Team SOP will drive output formats, file-naming and storage requirements of output files for this and similar tasks. Windows Event ID 4720 is used in Windows 2008+ and Windows 7+ for account creation Windows Event ID 624 is used in Windows 2003 and prior.  
+## Standards
 
-NB: Moved this BD from 'Protect' to the 'Detect' LOE per commander's guidance  
+* Team member queries the DC to obtain:
+  * Name of user who created new account
+  * Security Identifier (SID) of the creator
+  * Logon ID (semi-unique tracker of session)
+  * Name and SID of new account
+  * Domain of new account
+* Output to CSV and compare against authorized user list
+* Investigate account creator and validate authorization
+* Optional: Execute PR.AC-1.1 to obtain all user attributes for advanced comparison
 
+---
 
-## Manual Steps  
-* Lists all users who have been created within the last 5 days and the actual date:  
-	```powershell
-	$When = ((Get-Date).AddDays(-5)).Date
-	Get-ADUser -Filter {whenCreated -ge $When} -Properties whenCreated
-	```  
+## End State
 
-* Using PowerShell, dump new Active Directory accounts in last 5 Days:  
-	```powershell
-	import-module activedirectory
-	Get-QADUser -CreatedAfter (Get-Date).AddDays(-5)
-	Get-ADUser -Filter * -Properties whenCreated | Where-Object {$_.whenCreated -ge ((Get-Date).AddDays(-5)).Date}
-	```  
+All new account creations (local + cloud) are discovered, validated, and documented.
 
-* Get log events of new account creation:  
-	```powershell
-	Get-EventLog Security 4720 -after ((get-date).addDays(-1))
-	```  
+---
 
-4722, when a account was enabled  
-4726, when a account is deleted  
-4725, when a account is disabled  
+## Notes
 
-* Get SID of AD Group:  
-	```powershell
-	Get-ADGroup -Identity "some_group_name"
-	```  
+* Primary Windows Event IDs:
+  * `4720` → User account created (Windows 7+/Windows Server 2008+)
+  * `624` → User account created (Windows 2003 and older)
+* Other useful Event IDs:
+  * `4722` → Account enabled
+  * `4725` → Account disabled
+  * `4726` → Account deleted
 
-* Get Group name from SID:  
-	```powershell
-	Get-ADGroup -Identity S-1-5-32-544
-	```  
+---
 
-* Get SID of a local user:  
-	```bat
-	wmic useraccount where name=‘some_username' get sid
-	```
+## Manual Steps
 
-* Get SID for current logged in domain user:  
-	```bat
-	whoami /user
-	```  
+### PowerShell → Active Directory
 
-* Get SID for the local administrator of the computer:  
-	```bat
-	wmic useraccount where (name='administrator' and domain='%computername%') get name,sid
-	```  
+List users created in last 5 days:
 
-* Find username from a SID:  
-	```bat
-	wmic useraccount where sid='S-1-3-12-1234525106-3567804255-XYZAA-1111' get name
-	```  
+```powershell
+$When = ((Get-Date).AddDays(-5)).Date
+Get-ADUser -Filter {whenCreated -ge $When} -Properties whenCreated
+```
 
-* Get SID for the domain administrator:  
-	```bat
-	wmic useraccount where (name='administrator' and domain='%userdomain%') get name,sid
-	```  
+Alternative AD query:
 
+```powershell
+import-module activedirectory
+Get-QADUser -CreatedAfter (Get-Date).AddDays(-5)
+Get-ADUser -Filter * -Properties whenCreated | Where-Object {$_.whenCreated -ge ((Get-Date).AddDays(-5)).Date}
+```
 
-## Running Script  
-This script will be run at a command directed interval.  
-`.\AD_AccountCreationDetection.ps1`  
+### PowerShell → Security Event Logs (Direct account creation events)
 
+```powershell
+Get-EventLog Security -InstanceId 4720 -after ((get-date).AddDays(-1))
+```
 
-## Dependencies  
+> **Operator Note:** 4720 is the most important → direct user creation.
 
+---
 
-## Other available tools  
-[BloodHound](https://github.com/BloodHoundAD/BloodHound)  
+### Additional SID Queries and Investigations
 
+#### Get SID of AD Group
 
-## References  
-[PowerShell Get Recently Created Users](https://github.com/WiredPulse/PowerShell/blob/master/Active_Directory/Get-ADUser_RecentlyCreatedUsers.ps1)  
+```powershell
+Get-ADGroup -Identity "some_group_name"
+```
 
+#### Get Group from SID
 
-## Revision History  
+```powershell
+Get-ADGroup -Identity S-1-5-32-544
+```
+
+#### Local User SID
+
+```cmd
+wmic useraccount where name='some_username' get sid
+```
+
+#### Current User SID
+
+```cmd
+whoami /user
+```
+
+#### Local Admin SID
+
+```cmd
+wmic useraccount where (name='administrator' and domain='%computername%') get name,sid
+```
+
+#### Find username from SID
+
+```cmd
+wmic useraccount where sid='S-1-3-12-XYZAA-1111' get name
+```
+
+---
+
+### Cloud Platform User Creation Monitoring
+
+#### AWS → CloudTrail
+
+```bash
+aws cloudtrail lookup-events --lookup-attributes AttributeKey=EventName,AttributeValue=CreateUser
+```
+
+- Review IAM user creation events
+
+#### Azure → Azure AD Audit Logs
+
+```powershell
+Search-UnifiedAuditLog -StartDate (Get-Date).AddDays(-1) -Operations "Add user"
+```
+
+or via Portal → Azure AD → Audit Logs
+
+#### GCP → Cloud Audit Logs
+
+```bash
+gcloud logging read "protoPayload.methodName=\"google.admin.directory.user.insert\""
+```
+
+> **Operator Note:** Validate if new user/service account was provisioned automatically or manually.
+
+---
+
+## Running Script
+
+`.\\AD_AccountCreationDetection.ps1`
+
+> **Operator Note:** This should be run at intervals (command-directed or daily).
+
+---
+
+## Dependencies
+
+* AD Module for PowerShell
+* Event Log Access
+* Cloud Admin roles (reader for audit logs)
+
+---
+
+## Other Available Tools
+
+| Tool | Platform | Installation | Usage |
+|------|----------|--------------|-------|
+| Security Onion (via Winlogbeat) | Network | Native | SMB + AD event ingest |
+| BloodHound | AD | Native | Visualize and audit AD permissions and accounts |
+| OSSEC / Wazuh | Cross-platform | Native | Detect user additions |
+| AWS CloudTrail | AWS | Native | IAM user creation |
+| Azure AD Audit Logs | Azure | Native | User creation tracking |
+| GCP Cloud Audit Logs | GCP | Native | Service/User account creation |
+
+---
+
+## Operator Recommendations and Additional Tools
+
+### Operator Checklist
+
+- [ ] Run PowerShell commands for local AD → capture new user creations
+- [ ] Collect SID and Logon ID of creator and new account
+- [ ] Validate if account creation was authorized → request/approval
+- [ ] Review Event IDs for suspicious enable/delete/disabling post-creation
+- [ ] Review cloud (AWS, Azure, GCP) audit logs for new user/service account additions
+- [ ] Investigate accounts not aligned with change control
+- [ ] Document findings and close cases or escalate
+
+### Best Practices
+
+- Automate queries into SIEM/SOAR for real-time alerts
+- Validate service account creations → often targets for persistence
+- Include cloud in daily/weekly reviews
+- Tag or annotate all authorized service accounts
+
+---
+
+## References
+
+* [PowerShell Get Recently Created Users](https://github.com/WiredPulse/PowerShell/blob/master/Active_Directory/Get-ADUser_RecentlyCreatedUsers.ps1)
+* [AWS CloudTrail CreateUser](https://docs.aws.amazon.com/IAM/latest/UserGuide/cloudtrail-integration.html)
+* [Azure AD Audit Logs](https://learn.microsoft.com/en-us/azure/active-directory/reports-monitoring/concept-audit-logs)
+* [GCP Cloud Audit Logs](https://cloud.google.com/logging/docs/audit)
+
+---
+
+## Revision History
+
+| Date | Version | Description | Author |
+|------|---------|-------------|--------|
+| 2025-05-02 | 1.0 | Original retained and expanded for cloud + operator workflow | Leo |
