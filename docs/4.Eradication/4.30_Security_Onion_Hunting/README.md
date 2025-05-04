@@ -1,14 +1,98 @@
-## Security Onion Hunting  
-The purpose of this task is to document the procedures for threat hunting in Security Onion.  The task includes Sysmon examples and queries used to find the events.  
+# 4.30 Security Onion Hunting
 
-## Conditions  
-* Security Onion: The system must be installed and setup to receive log forwarding from the Wazuh agent on endpoints  
-* Clients: 
-	* Sysmon installed using the ionstorm config file  
-	* Wazuh agent installed and forwarding, inscluding sysmon logs to Security Onion  
+## Task
 
+Conduct advanced threat hunting using Security Onion to identify suspicious or malicious activities, such as:
 
-## Standards  
+* Command and Control (C2) beaconing
+* Malware artifacts
+* Abnormal network traffic or protocol use
+* Exploit attempts
+* Lateral movement and privilege escalation
+
+---
+
+## Conditions
+
+* Security Onion installed and configured to receive log forwarding from Wazuh agents.
+* Endpoints configured with Sysmon using ionstorm config.
+* Wazuh agent installed and forwarding logs (Sysmon + Security logs).
+* Network traffic is captured and PCAPs are available for analysis.
+* Operator has access to Kibana, Hunt, so-event, and PCAP review tools.
+
+---
+
+## Standards
+
+Threat hunting must cover detection and analysis for the following threat activity categories with the appropriate tools and techniques:
+
+| Threat Type | Tools | Example Indicators / Where to Look |
+|-------------|-------|------------------------------------|
+| C2 Beaconing | Zeek, Suricata, Hunt, Kibana | DNS queries, JA3/SNI anomalies, periodic HTTP/S POST requests, SMB beacons |
+| Malware Artifacts | Sysmon, Kibana, Hunt, so-event | File writes, autoruns, suspicious parent-child process creation |
+| Abnormal Traffic | Zeek, Suricata, PCAP analysis | Unusual protocols, large outbound traffic, DNS tunneling |
+| Exploit Attempts | Suricata, so-event | RPC/DCERPC, SMB exploits, brute force logins |
+| Lateral Movement | Sysmon, Suricata, Zeek | CreateRemoteThread, WinRM, SMB access, credential dumping |
+
+---
+
+## End State
+
+* Hunting is performed thoroughly and findings documented.
+* Any suspicious activity is triaged and escalated as required.
+* Eradication actions are initiated if malicious activity is confirmed.
+
+---
+
+## Notes
+
+Security Onion provides a unified interface for analyzing host and network telemetry:
+
+* **Kibana:** Powerful log search and visualization
+* **Hunt:** Fast IOC and behavior-based hunting interface
+* **so-event:** Correlated IDS alerts and event metadata
+* **PCAP Analysis (so-pcap, Wireshark):** Deep packet inspection
+
+**Hunting requires combining IOC-based and behavior-based methods.**
+
+---
+
+## Manual Steps
+
+### Step 1 — Access Security Onion Interfaces
+
+#### Kibana
+
+- Navigate to `https://[SecurityOnionIP]`
+- Click **Kibana**
+- Use search to locate event types, suspicious processes, and network activity.
+
+**Example Screenshot:**
+
+![Kibana Search](./images/so-kibana-search.png)
+
+---
+
+#### Hunt
+
+- From Security Onion, open **Hunt**.
+- Use Hunt for rapid IOC queries and pattern-based analysis.
+
+**Example Screenshot:**
+
+![Hunt IOC Dashboard](./images/so-hunt-ioc-dashboard.png)
+
+---
+
+#### so-event
+
+- View alerts and correlated metadata.
+- Pivot between events, PCAPs, and logs for enriched context.
+
+**Example Screenshot:**
+
+![SO Event Dashboard](./images/so-event-dashboard.png)
+
 These first examples are events from Sysmon showing some of the common tactics used by threat actors.  The events have been generated using MetaSploit and  CobaltStrike  
 
 ### Lateral Movement  
@@ -170,152 +254,214 @@ StartAddress: 0x000001A4BC400000
 StartModule: -
 StartFunction: -
 ```  
+---
 
-### Security Onion Hunt  
-The next section will provide some basic queries that can be used in Security Onion Hunt  
-----------------------------------------------------------------------------------------  
+### Step 2 — Execute Hunting Queries
 
-#### Filter for all sysmon events  
+#### C2 Beaconing
+
+**DNS Example (Kibana or Hunt)**
+
+```lucene
+dns.question.name:*.xyz AND dns.answers.data:"<external_ip>"
 ```
-AND event.module:"sysmon" | groupby event.module event.dataset
-```  
 
-#### Filter for create remote thread type events  
+**HTTP Periodic Beaconing**
+
+```lucene
+event.module:http AND event.dataset:zeek.http AND http.request.method:POST
 ```
-AND event.module: "sysmon" AND event.dataset:"create_remote_thread" | groupby event.module event.dataset
-```  
 
-#### Filter for network events  
-```
-AND event.module: "sysmon" AND event.dataset: "network_connection" | groupby event.module event.dataset
-```  
+**Cobalt Strike Beacon Pattern (Zeek)**
 
-#### Filtering for specifc systems  
-```
-AND event.module: "sysmon" AND agent.ip:"x.x.x.x" | groupby event.module event.dataset
-```  
-
-### Security Onion Elastic  
-The next section will provide some basic queries that can be used in Security Onion Elastic  
-----------------------------------------------------------------------------------------  
-
-#### Credential dumping  
-Note: You are looking for processes that do not normally touch lsass.exe  
-```
-event.module: "sysmon" AND event.dataset:"create_remote_thread" AND message:"*lsass.exe"
-```  
-
-```
-event.module: "sysmon" AND event.dataset:"create_remote_thread" AND winlog.event_data.targetImage:"*lsass.exe"
-```  
-
-#### Lateral movement  
-```
-event.module: "sysmon" AND event.dataset:"registry_value_set" AND winlog.event_data.targetObject:"*Start"
-```  
-
-```
-event.module: "sysmon" AND process.parent.executable:"WmiPrvSE.exe"
-```  
-
-#### Process injection  
-Note: add following fields on the left: winlog.event_data.sourceImage and winlog.event_data.targetImage and look for sourceimages like powershell|rundll32  
-```
-event.module: "sysmon" AND event.dataset:"create_remote_thread"
-```  
-
-```
-(event.module:"sysmon" AND event.dataset:"create_remote_thread" AND winlog.event_data.sourceImage:"powershell.exe") OR (event.module:"sysmon" AND event.dataset:"create_remote_thread" AND winlog.event_data.sourceImage:"rundll32.exe" )
-```  
-
-### Network Events  
-#### Network SMB executable file transfer  
-```
-rule.name: "ET POLICY SMB Executable File Transfer"
-```  
-
-```
-event.dataset.keyword: smb_files
-```  
-
-```
-file.name.keyword: *.exe
-```  
-
-#### Remote Service Control Request  
-```
-rule.name: "ET RPC DCERPC SVCCTL - Remote Service Control Manager Access"
-```  
-
-```
-dce_rpc.operation.keyword: OpenSCManagerA
-```  
-
-#### Lateral movement using NTLM (pass-the-hash)  
-```
-event.dataset.keyword: ntlm
-```  
-
-#### Lateral movement using WinRM  
-```
-rule.name: "ET POLICY WinRM wsman Access - Possible Lateral Movement"
-```  
-
-```
-rule.metadata.tag.keyword: WinRM
-```  
-
-```
-rule.name.keyword: "ET USER_AGENTS WinRM User Agent Detected - Possible Lateral Movement"
-```  
-
-#### CobaltStrike C2 communication (not sure how accurate this is, but it returned C2 communication)  
-```
+```lucene
 server.packets >8 AND server.packets <12
-```  
-
-#### Finding executable files
 ```
+
+**PCAP (Wireshark)**
+
+```wireshark
+ip.dst == [malicious_ip] && tcp.port == 443
+```
+
+---
+
+#### Malware Artifacts
+
+**Registry Autorun Key Modification (Sysmon)**
+
+```plaintext
+HKLM\System\CurrentControlSet\Services\[malicious]\Start
+```
+
+```lucene
+event.module:"sysmon" AND event.dataset:"registry_value_set"
+```
+
+**Malware Process Creation (Sysmon)**
+
+```lucene
+event.module:"sysmon" AND event.dataset:"process_create" AND process.command_line.keyword:"powershell -nop"
+```
+
+**Executable File Dropped**
+
+```lucene
 file.mime_type.keyword: application/x-dosexec
-```  
-
-#### DNS Queries
-```
-dns.query.name.keyword:* AND dns.query.type_name.keyword: A (This will find all DNS A records, not very usefull but a syntax example)
 ```
 
+---
 
-## End State  
-Provide examples of threat hunting in Security onion  
+#### Abnormal Protocol or Traffic Patterns
 
+**SMB Executable File Transfer**
 
-## Notes  
-N/A  
+```lucene
+rule.name: "ET POLICY SMB Executable File Transfer"
+event.dataset.keyword: smb_files
+file.name.keyword: *.exe
+```
 
+**DNS Tunneling (Zeek)**
 
-## Manual Steps  
-N/A  
+```lucene
+dns.query.name.keyword:* AND dns.query.type_name.keyword:A
+```
 
- 
-## Running Script
-N/A  
+---
 
+#### Exploit Attempts
 
-## Dependencies  
-N/A  
+**Remote Service Control Access (DCERPC)**
 
+```lucene
+rule.name: "ET RPC DCERPC SVCCTL - Remote Service Control Manager Access"
+dce_rpc.operation.keyword: OpenSCManagerA
+```
 
-## Other available tools  
-N/A  
+**WinRM (Lateral Movement)**
 
+```lucene
+rule.name: "ET POLICY WinRM wsman Access - Possible Lateral Movement"
+rule.metadata.tag.keyword: WinRM
+```
 
-## References  
-[Windows Event Log Examples](https://github.com/sbousseaden/EVTX-ATTACK-SAMPLES)  
-[SIGMA Rules Examples](https://github.com/SigmaHQ/sigma/tree/master/rules/windows)  
-[RUNDLL32 Connection to the Internet](https://www.cobaltstrike.com/blog/why-is-rundll32-exe-connecting-to-the-internet/)  
-[Quick Malware Analysis with Security Onion](https://www.youtube.com/watch?v=KBjr1fdb3jY)  
-[Quick Malware Analysis: malware-traffic-analysis.net pcap from 2021-06-18](https://blog.securityonion.net/2021/07/quick-malware-analysis-malware-traffic.html)  
+---
 
+#### Lateral Movement and Privilege Escalation
 
-## Revision History  
+**Remote Thread Injection (Sysmon CreateRemoteThread)**
 
+```lucene
+event.module:"sysmon" AND event.dataset:"create_remote_thread"
+```
+
+**Credential Dumping (LSASS access)**
+
+```lucene
+event.module:"sysmon" AND event.dataset:"create_remote_thread" AND winlog.event_data.targetImage:"*lsass.exe"
+```
+
+**NTLM Pass-the-Hash (Zeek NTLM Events)**
+
+```lucene
+event.dataset.keyword: ntlm
+```
+
+---
+
+### Step 3 — Analyze PCAP (optional step)
+
+#### Using so-pcap GUI
+
+* Select timeframe or relevant alert from so-event.
+* Download PCAP or analyze inline using Wireshark.
+
+**Example Wireshark Filters**
+
+```wireshark
+tcp.port == 443 and ip.dst == [suspicious_ip]
+```
+
+* Look for SSL/TLS handshakes with abnormal JA3 or periodic beaconing.
+
+---
+
+## Running Scripts (optional)
+
+#### Example Kibana Export
+
+```json
+GET _search
+{
+  "query": {
+    "match": {
+      "dns.question.name": "maliciousdomain.com"
+    }
+  }
+}
+```
+
+#### Blocking Malicious Domains
+
+```powershell
+Add-Content -Path "C:\Windows\System32\drivers\etc\hosts" -Value "`n127.0.0.1 malicious.badactor.com"
+```
+
+---
+
+## Dependencies
+
+* Fully deployed Security Onion Stack (Kibana, Hunt, so-event, so-pcap)
+* Sysmon + ionstorm config installed on endpoints
+* Wazuh agent forwarding logs
+* Analyst operator trained on MITRE ATT&CK, network analysis, and incident response playbooks
+
+---
+
+## Other Available Tools
+
+| Tool | Platform | Installation | Usage |
+|------|----------|--------------|-------|
+| Zeek | Cross-platform | Installed | Network protocol inspection and correlation |
+| Suricata | Cross-platform | Installed | IDS/IPS alerting |
+| Sysmon | Windows | Installed on endpoints | Process, Registry, and network activity monitoring |
+| Wireshark | Cross-platform | Installed | PCAP analysis |
+| Sigma Rules + Elastalert | Optional | Installed or cloud | Convert hunting queries to detection rules |
+
+---
+
+## Operator Recommendations and Best Practices
+
+### Operator Checklist
+
+- [ ] Access Kibana, Hunt, and so-event interfaces.
+- [ ] Run hunting queries for C2, malware artifacts, abnormal traffic, exploits, and lateral movement.
+- [ ] Analyze PCAP if necessary for beaconing and covert channels.
+- [ ] Document findings in hunt log with screenshots, queries, and notes.
+- [ ] Submit findings for eradication or closure as appropriate.
+
+### Best Practices
+
+* Pivot frequently between host and network telemetry.
+* Use IOC and behavior-based queries together.
+* Work collaboratively and validate suspicious findings.
+* Document everything for Lessons Learned and detection rule creation.
+
+---
+
+## References
+
+* [Windows Event Log Examples](https://github.com/sbousseaden/EVTX-ATTACK-SAMPLES)
+* [Sigma Rules](https://github.com/SigmaHQ/sigma/tree/master/rules/windows)
+* [RUNDLL32 Internet Connection Article](https://www.cobaltstrike.com/blog/why-is-rundll32-exe-connecting-to-the-internet/)
+* [Security Onion Quick Malware Analysis](https://www.youtube.com/watch?v=KBjr1fdb3jY)
+* [Security Onion Malware Traffic Analysis](https://blog.securityonion.net/2021/07/quick-malware-analysis-malware-traffic.html)
+
+---
+
+## Revision History
+
+| Date | Version | Description | Author |
+|------|---------|-------------|--------|
+| 2025-05-02 | 1.3 | FULL MERGE: Original content + screenshots + advanced standards + multi-platform procedures and examples for technical operators | Leo |
